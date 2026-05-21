@@ -86,7 +86,9 @@
     "build:extension": "esbuild src/extension/extension.ts --bundle --outfile=dist/extension/extension.js --external:vscode --format=cjs --platform=node",
     "build:webview": "vite build",
     "watch:extension": "esbuild src/extension/extension.ts --bundle --outfile=dist/extension/extension.js --external:vscode --format=cjs --platform=node --watch",
-    "dev": "concurrently \"npm run watch:extension\" \"vite build --watch\""
+    "dev": "concurrently \"npm run watch:extension\" \"vite build --watch\"",
+    "test": "vitest run",
+    "test:watch": "vitest"
   },
   "devDependencies": {
     "@sveltejs/vite-plugin-svelte": "^7.1.2",
