@@ -19,20 +19,19 @@ export function createDocumentModel(
 ): DocumentModel {
   const contentHtml = stripFrontmatterBlock(html);
   const text = stripTags(contentHtml);
-  const signals = createSignals(contentHtml, text);
+  const rawSignals = createSignals(contentHtml, text);
   const sections = extractSections(contentHtml);
+  const finalSignals: LayoutSignals = { ...rawSignals, sectionCount: sections.length };
   const stats: DocumentStats = {
-    wordCount: signals.wordCount,
-    headingCount: signals.headingCount,
+    wordCount: finalSignals.wordCount,
+    headingCount: finalSignals.headingCount,
     sectionCount: sections.length,
-    codeBlockCount: signals.codeBlockCount,
-    tableCount: signals.tableCount,
-    taskCount: signals.taskCount,
-    completedTaskCount: countCompletedTasks(contentHtml),
-    imageCount: signals.imageCount,
+    codeBlockCount: finalSignals.codeBlockCount,
+    tableCount: finalSignals.tableCount,
+    taskCount: finalSignals.taskCount,
+    completedTaskCount: finalSignals.completedTaskCount,
+    imageCount: finalSignals.imageCount,
   };
-
-  const finalSignals: LayoutSignals = { ...signals, sectionCount: sections.length };
 
   return {
     html,
@@ -71,21 +70,21 @@ export function isLayoutType(value: string): value is LayoutType {
 // Internal helpers
 // ---------------------------------------------------------------------------
 
+type RawLayoutSignals = Omit<LayoutSignals, 'sectionCount'>;
+
 function stripFrontmatterBlock(html: string): string {
   return html.replace(FRONTMATTER_BLOCK_RE, '').trim();
 }
 
-function createSignals(html: string, text: string): LayoutSignals {
+function createSignals(html: string, text: string): RawLayoutSignals {
   const headingCount = countMatches(html, /<h[1-6]\b/gi);
   const paragraphCount = countMatches(html, /<p\b/gi);
   const h2Count = countMatches(html, /<h2\b/gi);
   const hrCount = countMatches(html, /<hr\b/gi);
-  const sectionCount = Math.max(1, h2Count || hrCount + 1);
 
-  const signals: LayoutSignals = {
+  const signals: RawLayoutSignals = {
     wordCount: countWords(text),
     headingCount,
-    sectionCount,
     codeBlockCount: countMatches(html, /<pre\b/gi),
     tableCount: countMatches(html, /<table\b/gi),
     taskCount: countMatches(html, /class="task-checkbox"/gi),
