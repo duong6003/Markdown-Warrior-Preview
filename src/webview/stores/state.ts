@@ -24,7 +24,7 @@ export function loadState(): WebviewState {
     ...state,
     layoutOverride: normalizeLayoutOverride(state.layoutOverride),
     mode: state.mode === 'presentation' ? 'presentation' : 'document',
-    collapsedHeadings: Array.isArray(state.collapsedHeadings) ? state.collapsedHeadings : [],
+    collapsedHeadings: Array.isArray(state.collapsedHeadings) ? state.collapsedHeadings.filter((item): item is string => typeof item === 'string') : [],
     tocVisible: typeof state.tocVisible === 'boolean' ? state.tocVisible : DEFAULT_STATE.tocVisible,
     scrollPosition: typeof state.scrollPosition === 'number' ? state.scrollPosition : 0,
   };
@@ -36,9 +36,11 @@ export function saveState(state: Partial<WebviewState>) {
   setState(updated);
 }
 
+const LAYOUT_TYPE_SET = new Set<string>(LAYOUT_TYPES);
+
 function normalizeLayoutOverride(value: unknown): LayoutOverride {
   if (value === 'auto') return 'auto';
-  if (typeof value === 'string' && (LAYOUT_TYPES as readonly string[]).includes(value)) {
+  if (typeof value === 'string' && LAYOUT_TYPE_SET.has(value)) {
     return value as LayoutOverride;
   }
   return 'auto';

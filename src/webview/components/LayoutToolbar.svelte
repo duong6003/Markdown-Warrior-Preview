@@ -18,12 +18,12 @@
 
   let {
     override = 'auto',
-    detectedLayout = 'magazine',
-    currentLayout = 'magazine',
+    detectedLayout,
+    currentLayout,
     onOverrideChange,
     onTogglePresentation,
   }: {
-    override: LayoutOverride;
+    override?: LayoutOverride;
     detectedLayout: LayoutType;
     currentLayout: LayoutType;
     onOverrideChange: (override: LayoutOverride) => void;
@@ -37,6 +37,7 @@
       <button
         class="layout-toolbar__pill"
         class:active={override === option.value}
+        aria-pressed={override === option.value}
         type="button"
         title={option.value === 'auto' ? `Auto: ${labels[detectedLayout]}` : option.label}
         onclick={() => onOverrideChange(option.value)}
