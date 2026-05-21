@@ -1,10 +1,27 @@
 <script lang="ts">
-  let message = $state('MarkdownWarriorPreview — Webview Ready');
+  import { onMessage, postMessage } from './lib/message-bridge';
+
+  let html = $state('<p>Loading preview...</p>');
+
+  onMessage((message) => {
+    switch (message.type) {
+      case 'update':
+        html = message.html;
+        break;
+      case 'scrollTo':
+        // Will be implemented in Phase v0.1
+        break;
+    }
+  });
+
+  // Notify host that webview is ready
+  postMessage({ type: 'ready' });
 </script>
 
 <main>
-  <h1>{message}</h1>
-  <p>Webview is connected and running.</p>
+  <div class="markdown-body">
+    {@html html}
+  </div>
 </main>
 
 <style>
@@ -16,8 +33,8 @@
     min-height: 100vh;
   }
 
-  h1 {
-    font-size: 1.5rem;
-    margin-bottom: 0.5rem;
+  :global(.markdown-body) {
+    max-width: 800px;
+    margin: 0 auto;
   }
 </style>

@@ -1,17 +1,20 @@
 import * as vscode from 'vscode';
 import * as path from 'path';
-import * as fs from 'fs';
+import type { WebviewToHostMessage } from '../shared/messages';
 
 export class PreviewProvider {
   private panel: vscode.WebviewPanel | undefined;
+  private currentEditor: vscode.TextEditor | undefined;
 
   constructor(private readonly extensionUri: vscode.Uri) {}
 
   public show(editor: vscode.TextEditor) {
+    this.currentEditor = editor;
     const column = vscode.ViewColumn.Beside;
 
     if (this.panel) {
       this.panel.reveal(column);
+      this.updateContent(editor);
     } else {
       this.panel = vscode.window.createWebviewPanel(
         'markdownWarriorPreview',
@@ -28,12 +31,66 @@ export class PreviewProvider {
         }
       );
 
+      // Handle messages from webview
+      this.panel.webview.onDidReceiveMessage(
+        (message: WebviewToHostMessage) => {
+          this.handleWebviewMessage(message);
+        },
+        undefined,
+        []
+      );
+
       this.panel.onDidDispose(() => {
         this.panel = undefined;
+        this.currentEditor = undefined;
       });
-    }
 
-    this.panel.webview.html = this.getWebviewContent(this.panel.webview);
+      this.panel.webview.html = this.getWebviewContent(this.panel.webview);
+    }
+  }
+
+  private handleWebviewMessage(message: WebviewToHostMessage) {
+    switch (message.type) {
+      case 'ready':
+        if (this.currentEditor) {
+          this.updateContent(this.currentEditor);
+        }
+        break;
+      case 'openExternal':
+        if (message.url.startsWith('https://') || message.url.startsWith('http://')) {
+          vscode.env.openExternal(vscode.Uri.parse(message.url));
+        }
+        break;
+      case 'openFile': {
+        const uri = vscode.Uri.file(message.path);
+        vscode.workspace.openTextDocument(uri).then(doc => {
+          vscode.window.showTextDocument(doc);
+        });
+        break;
+      }
+      case 'scrollSync':
+        // Will be implemented in Phase v0.1
+        break;
+      case 'checkboxToggle':
+        // Will be implemented in Phase v0.2
+        break;
+    }
+  }
+
+  private updateContent(editor: vscode.TextEditor) {
+    if (!this.panel) return;
+    const text = editor.document.getText();
+    // Temporary: send raw text wrapped in markdown-body
+    // Will be replaced by markdown-it engine in Phase v0.1
+    const escaped = text
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;');
+    this.panel.webview.postMessage({
+      type: 'update',
+      html: `<pre style="white-space: pre-wrap;">${escaped}</pre>`,
+      sourceMap: [],
+    });
   }
 
   private getWebviewContent(webview: vscode.Webview): string {
