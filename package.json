@@ -25,6 +25,14 @@
         "command": "markdownWarrior.togglePresentation",
         "title": "Markdown Warrior: Toggle Presentation Mode",
         "icon": "$(play)"
+      },
+      {
+        "command": "markdownWarrior.exportHTML",
+        "title": "Markdown Warrior: Export as HTML"
+      },
+      {
+        "command": "markdownWarrior.exportPDF",
+        "title": "Markdown Warrior: Export as PDF (via Browser)"
       }
     ],
     "menus": {
@@ -62,7 +70,11 @@
         "markdownWarrior.presentationTransition": {
           "type": "string",
           "default": "fade",
-          "enum": ["fade", "slide", "none"],
+          "enum": [
+            "fade",
+            "slide",
+            "none"
+          ],
           "description": "Slide transition effect in presentation mode"
         }
       }
@@ -82,12 +94,14 @@
     "@types/katex": "^0.16.8",
     "@types/markdown-it": "^14.1.2",
     "@types/vscode": "^1.80.0",
+    "@vscode/test-electron": "^2.5.2",
     "@vscode/vsce": "^3.3.2",
     "concurrently": "^9.2.1",
     "esbuild": "^0.28.0",
     "svelte": "^5.55.9",
     "typescript": "^5.8.3",
-    "vite": "^8.0.13"
+    "vite": "^8.0.13",
+    "vitest": "^4.1.7"
   },
   "dependencies": {
     "gray-matter": "^4.0.3",
