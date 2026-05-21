@@ -1,5 +1,7 @@
 <script lang="ts">
+  import { onMount } from 'svelte';
   import { onMessage, postMessage } from './lib/message-bridge';
+  import { scrollToLine, setupScrollReporter } from './lib/source-map';
   import TableOfContents from './components/TableOfContents.svelte';
 
   let html = $state('<p>Loading preview...</p>');
@@ -11,12 +13,16 @@
         html = message.html;
         break;
       case 'scrollTo':
-        // Will be implemented next task
+        scrollToLine(message.line);
         break;
       case 'configChanged':
         showTOC = message.config.showTOC;
         break;
     }
+  });
+
+  onMount(() => {
+    setupScrollReporter();
   });
 
   // Notify host that webview is ready
