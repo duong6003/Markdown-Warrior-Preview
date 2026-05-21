@@ -1,0 +1,72 @@
+{
+  "name": "markdown-warrior-preview",
+  "displayName": "MarkdownWarriorPreview",
+  "description": "A modern, beautiful markdown preview with presentation mode for VS Code",
+  "version": "0.0.1",
+  "publisher": "markdown-warrior",
+  "engines": {
+    "vscode": "^1.80.0"
+  },
+  "categories": ["Other"],
+  "activationEvents": [
+    "onLanguage:markdown"
+  ],
+  "main": "./dist/extension/extension.js",
+  "contributes": {
+    "commands": [
+      {
+        "command": "markdownWarrior.openPreview",
+        "title": "Markdown Warrior: Open Preview",
+        "icon": "$(open-preview)"
+      }
+    ],
+    "menus": {
+      "editor/title": [
+        {
+          "when": "resourceLangId == markdown",
+          "command": "markdownWarrior.openPreview",
+          "group": "navigation"
+        }
+      ]
+    },
+    "configuration": {
+      "title": "Markdown Warrior Preview",
+      "properties": {
+        "markdownWarrior.scrollSync": {
+          "type": "boolean",
+          "default": true,
+          "description": "Enable two-way scroll sync between editor and preview"
+        },
+        "markdownWarrior.fontSize": {
+          "type": "number",
+          "default": 16,
+          "description": "Font size in preview (px)"
+        },
+        "markdownWarrior.lineHeight": {
+          "type": "number",
+          "default": 1.6,
+          "description": "Line height in preview"
+        },
+        "markdownWarrior.showTOC": {
+          "type": "boolean",
+          "default": true,
+          "description": "Show table of contents sidebar"
+        }
+      }
+    }
+  },
+  "scripts": {
+    "vscode:prepublish": "npm run build",
+    "build": "npm run build:extension && npm run build:webview",
+    "build:extension": "esbuild src/extension/extension.ts --bundle --outfile=dist/extension/extension.js --external:vscode --format=cjs --platform=node",
+    "build:webview": "vite build",
+    "watch:extension": "esbuild src/extension/extension.ts --bundle --outfile=dist/extension/extension.js --external:vscode --format=cjs --platform=node --watch",
+    "dev": "concurrently \"npm run watch:extension\" \"vite build --watch\""
+  },
+  "devDependencies": {
+    "@types/vscode": "^1.80.0",
+    "@vscode/vsce": "^3.3.2",
+    "esbuild": "^0.25.4",
+    "typescript": "^5.8.3"
+  }
+}

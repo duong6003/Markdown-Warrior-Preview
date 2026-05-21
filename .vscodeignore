@@ -1,0 +1,10 @@
+.vscode/**
+node_modules/**
+src/**
+docs/**
+.kiro/**
+*.ts
+!dist/**
+vite.config.ts
+tsconfig*.json
+.gitignore
