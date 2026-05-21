@@ -1,10 +1,12 @@
 import * as vscode from 'vscode';
 import * as path from 'path';
 import type { WebviewToHostMessage } from '../shared/messages';
+import { MarkdownEngine } from './markdown-engine';
 
 export class PreviewProvider {
   private panel: vscode.WebviewPanel | undefined;
   private currentEditor: vscode.TextEditor | undefined;
+  private engine = new MarkdownEngine();
 
   constructor(private readonly extensionUri: vscode.Uri) {}
 
@@ -80,16 +82,11 @@ export class PreviewProvider {
   private updateContent(editor: vscode.TextEditor) {
     if (!this.panel) return;
     const text = editor.document.getText();
-    // Temporary: send raw text wrapped in markdown-body
-    // Will be replaced by markdown-it engine in Phase v0.1
-    const escaped = text
-      .replace(/&/g, '&amp;')
-      .replace(/</g, '&lt;')
-      .replace(/>/g, '&gt;');
+    const { html, sourceMap } = this.engine.render(text);
     this.panel.webview.postMessage({
       type: 'update',
-      html: `<pre style="white-space: pre-wrap;">${escaped}</pre>`,
-      sourceMap: [],
+      html,
+      sourceMap,
     });
   }
 
