@@ -3,6 +3,7 @@ import * as path from 'path';
 import type { WebviewToHostMessage } from '../shared/messages';
 import { MarkdownEngine } from './markdown-engine';
 import { ScrollSync } from './scroll-sync';
+import { AssetResolver } from './asset-resolver';
 
 export class PreviewProvider {
   private panel: vscode.WebviewPanel | undefined;
@@ -131,9 +132,14 @@ export class PreviewProvider {
     if (!this.panel) return;
     const text = editor.document.getText();
     const { html, sourceMap } = this.engine.render(text);
+
+    // Resolve local asset paths to webview URIs
+    const resolver = new AssetResolver(this.panel.webview, editor.document.uri);
+    const resolvedHtml = resolver.resolveAssets(html);
+
     this.panel.webview.postMessage({
       type: 'update',
-      html,
+      html: resolvedHtml,
       sourceMap,
     });
   }
