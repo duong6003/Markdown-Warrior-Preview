@@ -4,6 +4,10 @@
   "description": "A modern, beautiful markdown preview with presentation mode for VS Code",
   "version": "0.1.0",
   "publisher": "markdown-warrior",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/duong6003/Markdown-Warrior-Preview.git"
+  },
   "engines": {
     "vscode": "^1.80.0"
   },
