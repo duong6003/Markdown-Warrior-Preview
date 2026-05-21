@@ -3,7 +3,8 @@ export type HostToWebviewMessage =
   | { type: 'update'; html: string; sourceMap: SourceMapEntry[]; frontmatter: Record<string, unknown> | null }
   | { type: 'scrollTo'; line: number }
   | { type: 'themeChanged' }
-  | { type: 'configChanged'; config: PreviewConfig };
+  | { type: 'configChanged'; config: PreviewConfig }
+  | { type: 'togglePresentation' };
 
 // Messages from Webview → Extension Host
 export type WebviewToHostMessage =

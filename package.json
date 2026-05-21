@@ -20,6 +20,11 @@
         "command": "markdownWarrior.openPreview",
         "title": "Markdown Warrior: Open Preview",
         "icon": "$(open-preview)"
+      },
+      {
+        "command": "markdownWarrior.togglePresentation",
+        "title": "Markdown Warrior: Toggle Presentation Mode",
+        "icon": "$(play)"
       }
     ],
     "menus": {
@@ -53,6 +58,12 @@
           "type": "boolean",
           "default": true,
           "description": "Show table of contents sidebar"
+        },
+        "markdownWarrior.presentationTransition": {
+          "type": "string",
+          "default": "fade",
+          "enum": ["fade", "slide", "none"],
+          "description": "Slide transition effect in presentation mode"
         }
       }
     }

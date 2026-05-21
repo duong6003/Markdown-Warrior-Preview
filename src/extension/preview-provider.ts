@@ -18,6 +18,12 @@ export class PreviewProvider {
     await this.engine.initialize();
   }
 
+  public togglePresentation() {
+    if (this.panel) {
+      this.panel.webview.postMessage({ type: 'togglePresentation' });
+    }
+  }
+
   public show(editor: vscode.TextEditor) {
     this.currentEditor = editor;
     const column = vscode.ViewColumn.Beside;

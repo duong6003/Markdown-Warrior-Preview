@@ -5,7 +5,7 @@ export async function activate(context: vscode.ExtensionContext) {
   const previewProvider = new PreviewProvider(context.extensionUri);
   await previewProvider.initialize();
 
-  const command = vscode.commands.registerCommand(
+  const openPreviewCmd = vscode.commands.registerCommand(
     'markdownWarrior.openPreview',
     () => {
       const editor = vscode.window.activeTextEditor;
@@ -17,7 +17,14 @@ export async function activate(context: vscode.ExtensionContext) {
     }
   );
 
-  context.subscriptions.push(command);
+  const togglePresentationCmd = vscode.commands.registerCommand(
+    'markdownWarrior.togglePresentation',
+    () => {
+      previewProvider.togglePresentation();
+    }
+  );
+
+  context.subscriptions.push(openPreviewCmd, togglePresentationCmd);
 }
 
 export function deactivate() {}
