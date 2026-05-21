@@ -27,10 +27,16 @@ export class MarkdownEngine {
 
         if (this.highlighter && lang) {
           try {
-            return this.highlighter.codeToHtml(str, {
-              lang,
-              theme: 'css-variables',
-            });
+            // Try to highlight with loaded languages
+            const loaded = this.highlighter.getLoadedLanguages();
+            if (loaded.includes(lang as any)) {
+              return this.highlighter.codeToHtml(str, {
+                lang,
+                theme: 'css-variables',
+              });
+            }
+            // Queue language for lazy loading (will be available on next render)
+            this.loadLanguage(lang);
           } catch {
             // fallback to plain text
           }
@@ -49,13 +55,26 @@ export class MarkdownEngine {
     this.highlighter = await createHighlighter({
       themes: ['css-variables'],
       langs: [
-        'javascript', 'typescript', 'python', 'rust',
-        'html', 'css', 'json', 'bash', 'markdown',
-        'java', 'go', 'c', 'cpp', 'yaml', 'toml',
-        'jsx', 'tsx', 'sql', 'shell', 'php', 'ruby',
-        'swift', 'kotlin', 'dart', 'svelte', 'vue',
+        'javascript', 'typescript', 'python', 'json',
+        'html', 'css', 'bash', 'markdown',
       ],
     });
+  }
+
+  /**
+   * Load additional language on demand.
+   */
+  private async loadLanguage(lang: string): Promise<boolean> {
+    if (!this.highlighter) return false;
+    try {
+      const loaded = this.highlighter.getLoadedLanguages();
+      if (!loaded.includes(lang as any)) {
+        await this.highlighter.loadLanguage(lang as any);
+      }
+      return true;
+    } catch {
+      return false;
+    }
   }
 
   public render(content: string): RenderResult {

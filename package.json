@@ -2,13 +2,22 @@
   "name": "markdown-warrior-preview",
   "displayName": "MarkdownWarriorPreview",
   "description": "A modern, beautiful markdown preview with presentation mode for VS Code",
-  "version": "0.0.1",
+  "version": "0.1.0",
   "publisher": "markdown-warrior",
   "engines": {
     "vscode": "^1.80.0"
   },
   "categories": [
-    "Other"
+    "Other",
+    "Visualization"
+  ],
+  "keywords": [
+    "markdown",
+    "preview",
+    "presentation",
+    "mermaid",
+    "katex",
+    "slides"
   ],
   "activationEvents": [
     "onLanguage:markdown"
