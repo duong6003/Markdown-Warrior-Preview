@@ -1,7 +1,9 @@
 <script lang="ts">
-  import { onMount } from 'svelte';
+  import { onMount, tick } from 'svelte';
   import { onMessage, postMessage } from './lib/message-bridge';
   import { scrollToLine, setupScrollReporter } from './lib/source-map';
+  import { renderMermaidBlocks } from './lib/mermaid-renderer';
+  import { setupCheckboxHandler } from './lib/checkbox-handler';
   import { loadState, saveState } from './stores/state';
   import TableOfContents from './components/TableOfContents.svelte';
 
@@ -14,6 +16,15 @@
   // Save TOC state when it changes
   $effect(() => {
     saveState({ tocVisible: showTOC });
+  });
+
+  // Render mermaid blocks after HTML updates
+  $effect(() => {
+    if (html) {
+      tick().then(() => {
+        renderMermaidBlocks();
+      });
+    }
   });
 
   onMessage((message) => {
@@ -32,6 +43,7 @@
 
   onMount(() => {
     setupScrollReporter();
+    setupCheckboxHandler();
 
     // Restore scroll position
     const main = document.querySelector('main');

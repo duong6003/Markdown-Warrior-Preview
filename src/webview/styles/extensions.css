@@ -1,0 +1,136 @@
+/* Frontmatter block */
+.frontmatter-block {
+  background: var(--md-bg-secondary);
+  border: 1px solid var(--md-border);
+  border-radius: var(--md-radius);
+  margin-bottom: 1.5em;
+  overflow: hidden;
+}
+
+.frontmatter-header {
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--md-fg-muted);
+  padding: 0.5em 1em;
+  background: var(--md-bg-tertiary);
+  border-bottom: 1px solid var(--md-border);
+  font-weight: 600;
+}
+
+.frontmatter-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.85em;
+}
+
+.frontmatter-table td {
+  padding: 0.4em 1em;
+  border: none;
+  border-bottom: 1px solid var(--md-border);
+}
+
+.frontmatter-table tr:last-child td {
+  border-bottom: none;
+}
+
+.fm-key {
+  color: var(--md-accent);
+  font-weight: 500;
+  width: 30%;
+  font-family: var(--md-font-mono);
+  font-size: 0.9em;
+}
+
+.fm-value {
+  color: var(--md-fg-primary);
+}
+
+/* KaTeX math */
+.math-block {
+  margin: 1.5em 0;
+  padding: 1em;
+  overflow-x: auto;
+  text-align: center;
+}
+
+.math-error {
+  color: #f44747;
+  background: rgba(244, 71, 71, 0.1);
+  border: 1px solid rgba(244, 71, 71, 0.3);
+  border-radius: var(--md-radius);
+  padding: 0.5em 1em;
+  font-size: 0.85em;
+}
+
+/* KaTeX font overrides for VS Code webview */
+.katex {
+  font-size: 1.1em;
+}
+
+.katex .katex-mathml {
+  position: absolute;
+  clip: rect(1px, 1px, 1px, 1px);
+  padding: 0;
+  border: 0;
+  height: 1px;
+  width: 1px;
+  overflow: hidden;
+}
+
+/* Mermaid diagrams */
+.mermaid-block {
+  background: var(--md-bg-secondary);
+  border: 1px solid var(--md-border);
+  border-radius: var(--md-radius);
+  padding: 1.5em;
+  margin: 1.2em 0;
+  text-align: center;
+  overflow-x: auto;
+}
+
+.mermaid-block svg {
+  max-width: 100%;
+  height: auto;
+}
+
+.mermaid-loading {
+  color: var(--md-fg-muted);
+  font-style: italic;
+  font-size: 0.85em;
+}
+
+/* Interactive task checkboxes */
+.task-checkbox {
+  cursor: pointer;
+  margin-right: 0.5em;
+  transform: scale(1.2);
+  accent-color: var(--md-accent);
+}
+
+.task-checkbox:hover {
+  transform: scale(1.35);
+}
+
+/* Collapsible headings */
+.collapsible-heading {
+  cursor: pointer;
+  user-select: none;
+}
+
+.collapsible-heading::before {
+  content: '▼';
+  display: inline-block;
+  margin-right: 0.5em;
+  font-size: 0.7em;
+  transition: transform 0.2s ease;
+  color: var(--md-fg-muted);
+}
+
+.collapsible-heading.collapsed::before {
+  transform: rotate(-90deg);
+}
+
+.collapsible-content.collapsed {
+  display: none;
+}

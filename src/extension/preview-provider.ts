@@ -123,7 +123,7 @@ export class PreviewProvider {
         }
         break;
       case 'checkboxToggle':
-        // Will be implemented in Phase v0.2
+        this.toggleCheckbox(message.line, message.checked);
         break;
     }
   }
@@ -131,7 +131,7 @@ export class PreviewProvider {
   private updateContent(editor: vscode.TextEditor) {
     if (!this.panel) return;
     const text = editor.document.getText();
-    const { html, sourceMap } = this.engine.render(text);
+    const { html, sourceMap, frontmatter } = this.engine.render(text);
 
     // Resolve local asset paths to webview URIs
     const resolver = new AssetResolver(this.panel.webview, editor.document.uri);
@@ -141,7 +141,33 @@ export class PreviewProvider {
       type: 'update',
       html: resolvedHtml,
       sourceMap,
+      frontmatter,
     });
+  }
+
+  /**
+   * Toggle a checkbox in the markdown source file.
+   */
+  private async toggleCheckbox(line: number, checked: boolean) {
+    if (!this.currentEditor) return;
+
+    const doc = this.currentEditor.document;
+    const lineText = doc.lineAt(line).text;
+
+    // Replace [ ] with [x] or vice versa
+    const newText = checked
+      ? lineText.replace(/\[ \]/, '[x]')
+      : lineText.replace(/\[x\]/i, '[ ]');
+
+    if (newText !== lineText) {
+      const edit = new vscode.WorkspaceEdit();
+      edit.replace(
+        doc.uri,
+        new vscode.Range(line, 0, line, lineText.length),
+        newText
+      );
+      await vscode.workspace.applyEdit(edit);
+    }
   }
 
   private getWebviewContent(webview: vscode.Webview): string {
