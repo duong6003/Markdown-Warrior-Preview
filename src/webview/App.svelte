@@ -4,6 +4,7 @@
   import { scrollToLine, setupScrollReporter } from './lib/source-map';
   import { renderMermaidBlocks } from './lib/mermaid-renderer';
   import { setupCheckboxHandler } from './lib/checkbox-handler';
+  import { setupCollapsibleHeadings, restoreCollapsedState } from './lib/collapsible-headings';
   import { loadState, saveState } from './stores/state';
   import TableOfContents from './components/TableOfContents.svelte';
 
@@ -18,11 +19,12 @@
     saveState({ tocVisible: showTOC });
   });
 
-  // Render mermaid blocks after HTML updates
+  // Render mermaid blocks and restore collapsible state after HTML updates
   $effect(() => {
     if (html) {
       tick().then(() => {
         renderMermaidBlocks();
+        restoreCollapsedState();
       });
     }
   });
@@ -44,6 +46,7 @@
   onMount(() => {
     setupScrollReporter();
     setupCheckboxHandler();
+    setupCollapsibleHeadings();
 
     // Restore scroll position
     const main = document.querySelector('main');
