@@ -1,8 +1,9 @@
 import * as vscode from 'vscode';
 import { PreviewProvider } from './preview-provider';
 
-export function activate(context: vscode.ExtensionContext) {
+export async function activate(context: vscode.ExtensionContext) {
   const previewProvider = new PreviewProvider(context.extensionUri);
+  await previewProvider.initialize();
 
   const command = vscode.commands.registerCommand(
     'markdownWarrior.openPreview',

@@ -10,6 +10,10 @@ export class PreviewProvider {
 
   constructor(private readonly extensionUri: vscode.Uri) {}
 
+  public async initialize() {
+    await this.engine.initialize();
+  }
+
   public show(editor: vscode.TextEditor) {
     this.currentEditor = editor;
     const column = vscode.ViewColumn.Beside;

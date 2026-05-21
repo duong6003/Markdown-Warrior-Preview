@@ -1,18 +1,46 @@
 import MarkdownIt from 'markdown-it';
 import type { SourceMapEntry } from '../shared/messages';
+import { createHighlighter, type Highlighter } from 'shiki';
 
 export class MarkdownEngine {
   private md: MarkdownIt;
+  private highlighter: Highlighter | null = null;
 
   constructor() {
     this.md = new MarkdownIt({
       html: true,
       linkify: true,
       typographer: true,
+      highlight: (str, lang) => {
+        if (this.highlighter && lang) {
+          try {
+            return this.highlighter.codeToHtml(str, {
+              lang,
+              theme: 'css-variables',
+            });
+          } catch {
+            // fallback to plain text
+          }
+        }
+        return '';
+      },
     });
 
     this.addSourceMapPlugin();
     this.addHeadingIds();
+  }
+
+  public async initialize() {
+    this.highlighter = await createHighlighter({
+      themes: ['css-variables'],
+      langs: [
+        'javascript', 'typescript', 'python', 'rust',
+        'html', 'css', 'json', 'bash', 'markdown',
+        'java', 'go', 'c', 'cpp', 'yaml', 'toml',
+        'jsx', 'tsx', 'sql', 'shell', 'php', 'ruby',
+        'swift', 'kotlin', 'dart', 'svelte', 'vue',
+      ],
+    });
   }
 
   public render(content: string): { html: string; sourceMap: SourceMapEntry[] } {
