@@ -1,0 +1,70 @@
+:root {
+  --md-bg-primary: var(--vscode-editor-background, #1e1e1e);
+  --md-bg-secondary: var(--vscode-sideBar-background, #252526);
+  --md-bg-tertiary: var(--vscode-editorWidget-background, #2d2d30);
+  --md-fg-primary: var(--vscode-editor-foreground, #d4d4d4);
+  --md-fg-secondary: var(--vscode-descriptionForeground, #8b8b8b);
+  --md-fg-muted: var(--vscode-disabledForeground, #6b6b6b);
+  --md-accent: var(--vscode-textLink-foreground, #4fc1ff);
+  --md-accent-hover: var(--vscode-textLink-activeForeground, #74d7ff);
+  --md-border: var(--vscode-panel-border, #2d2d30);
+  --md-code-bg: var(--vscode-textCodeBlock-background, #2a2a2a);
+  --md-selection: var(--vscode-editor-selectionBackground, #264f78);
+  --md-font-body: var(--vscode-font-family, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Noto Sans', sans-serif);
+  --md-font-mono: var(--vscode-editor-fontFamily, 'JetBrains Mono', 'Fira Code', 'Cascadia Code', monospace);
+  --md-font-size: 16px;
+  --md-line-height: 1.6;
+  --md-radius: 6px;
+  --md-shadow: 0 1px 3px rgba(0, 0, 0, 0.12);
+  --md-shadow-lg: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+/* Shiki CSS variables theme bridge */
+:root {
+  --shiki-color-text: var(--md-fg-primary);
+  --shiki-color-background: var(--md-code-bg);
+  --shiki-token-constant: #4fc1ff;
+  --shiki-token-string: #ce9178;
+  --shiki-token-comment: #6a9955;
+  --shiki-token-keyword: #569cd6;
+  --shiki-token-parameter: #9cdcfe;
+  --shiki-token-function: #dcdcaa;
+  --shiki-token-string-expression: #ce9178;
+  --shiki-token-punctuation: #d4d4d4;
+  --shiki-token-link: #4fc1ff;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html, body {
+  height: 100%;
+  overflow: hidden;
+  background: var(--md-bg-primary);
+  color: var(--md-fg-primary);
+}
+
+::selection {
+  background: var(--md-selection);
+}
+
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--md-fg-muted);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--md-fg-secondary);
+}
