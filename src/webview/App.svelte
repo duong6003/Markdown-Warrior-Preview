@@ -25,16 +25,48 @@
   let model = $derived(createDocumentModel(html, frontmatter));
   let selectedLayout = $derived(resolveLayout(model.detectedLayout, frontmatter, layoutOverride));
 
+  // Restored once when <main> first appears; guards against re-restoring on layout switches.
+  let scrollRestored = false;
+  // Cleanup for the per-session scroll-position save listener on <main>.
+  let cleanupScrollSave: (() => void) | null = null;
+
   $effect(() => {
     saveState({ tocVisible: showTOC, mode, layoutOverride });
   });
 
   $effect(() => {
-    if (html && mode === 'document') {
-      selectedLayout;
+    if (html && mode === 'document' && selectedLayout) {
       tick().then(() => {
         renderMermaidBlocks();
         restoreCollapsedState();
+
+        const main = document.querySelector('main') as HTMLElement | null;
+        if (!main) return;
+
+        // setupScrollReporter removes the previous listener before adding a new one,
+        // so re-running on layout/mode change is safe.
+        setupScrollReporter(main);
+
+        if (!scrollRestored) {
+          scrollRestored = true;
+          if (initialState.scrollPosition > 0) {
+            requestAnimationFrame(() => {
+              main.scrollTop = initialState.scrollPosition;
+            });
+          }
+        }
+
+        // Replace save listener when <main> is remounted (layout switch recreates the element).
+        cleanupScrollSave?.();
+        let saveTimeout: number;
+        function onScrollSave() {
+          clearTimeout(saveTimeout);
+          saveTimeout = window.setTimeout(() => {
+            saveState({ scrollPosition: main!.scrollTop });
+          }, 500);
+        }
+        main.addEventListener('scroll', onScrollSave);
+        cleanupScrollSave = () => main.removeEventListener('scroll', onScrollSave);
       });
     }
   });
@@ -65,10 +97,6 @@
     mode = mode === 'document' ? 'presentation' : 'document';
   }
 
-  function setLayoutOverride(next: LayoutOverride) {
-    layoutOverride = next;
-  }
-
   function handleKeydown(e: KeyboardEvent) {
     if (e.key === 'Escape' && mode === 'presentation') {
       e.preventDefault();
@@ -77,26 +105,8 @@
   }
 
   onMount(() => {
-    setupScrollReporter();
     setupCheckboxHandler();
     setupCollapsibleHeadings();
-
-    const main = document.querySelector('main');
-    if (main && initialState.scrollPosition > 0) {
-      requestAnimationFrame(() => {
-        main.scrollTop = initialState.scrollPosition;
-      });
-    }
-
-    let saveTimeout: number;
-    main?.addEventListener('scroll', () => {
-      clearTimeout(saveTimeout);
-      saveTimeout = window.setTimeout(() => {
-        if (main) {
-          saveState({ scrollPosition: main.scrollTop });
-        }
-      }, 500);
-    });
   });
 
   postMessage({ type: 'ready' });
@@ -115,7 +125,7 @@
       override={layoutOverride}
       detectedLayout={model.detectedLayout}
       currentLayout={selectedLayout}
-      onOverrideChange={setLayoutOverride}
+      onOverrideChange={(v) => { layoutOverride = v; }}
       onTogglePresentation={toggleMode}
     />
 
