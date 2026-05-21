@@ -1,7 +1,9 @@
 <script lang="ts">
   import { onMessage, postMessage } from './lib/message-bridge';
+  import TableOfContents from './components/TableOfContents.svelte';
 
   let html = $state('<p>Loading preview...</p>');
+  let showTOC = $state(true);
 
   onMessage((message) => {
     switch (message.type) {
@@ -9,7 +11,10 @@
         html = message.html;
         break;
       case 'scrollTo':
-        // Will be implemented in Phase v0.1
+        // Will be implemented next task
+        break;
+      case 'configChanged':
+        showTOC = message.config.showTOC;
         break;
     }
   });
@@ -18,23 +23,30 @@
   postMessage({ type: 'ready' });
 </script>
 
-<main>
-  <div class="markdown-body">
-    {@html html}
-  </div>
-</main>
+<div class="layout" class:with-toc={showTOC}>
+  <main>
+    <div class="markdown-body">
+      {@html html}
+    </div>
+  </main>
+  <TableOfContents {html} visible={showTOC} />
+</div>
 
 <style>
-  main {
-    font-family: var(--vscode-font-family, sans-serif);
-    color: var(--vscode-editor-foreground, #333);
-    background: var(--vscode-editor-background, #fff);
-    padding: 20px;
+  .layout {
+    display: flex;
     min-height: 100vh;
+    background: var(--md-bg-primary);
   }
 
-  :global(.markdown-body) {
-    max-width: 800px;
-    margin: 0 auto;
+  main {
+    flex: 1;
+    overflow-y: auto;
+    height: 100vh;
+    scroll-behavior: smooth;
+  }
+
+  .layout.with-toc main {
+    margin-right: 220px;
   }
 </style>
