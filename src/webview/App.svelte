@@ -5,25 +5,33 @@
   import { renderMermaidBlocks } from './lib/mermaid-renderer';
   import { setupCheckboxHandler } from './lib/checkbox-handler';
   import { setupCollapsibleHeadings, restoreCollapsedState } from './lib/collapsible-headings';
+  import { createDocumentModel, resolveLayout } from './lib/layout-engine';
   import { loadState, saveState } from './stores/state';
-  import TableOfContents from './components/TableOfContents.svelte';
+  import type { LayoutOverride } from './types/layout';
+  import LayoutToolbar from './components/LayoutToolbar.svelte';
   import SlideView from './components/SlideView.svelte';
+  import MagazineLayout from './layouts/MagazineLayout.svelte';
+  import DocsLayout from './layouts/DocsLayout.svelte';
+  import StoryLayout from './layouts/StoryLayout.svelte';
+  import DashboardLayout from './layouts/DashboardLayout.svelte';
 
-  // Load persisted state
   const initialState = loadState();
 
   let html = $state('<p>Loading preview...</p>');
+  let frontmatter = $state<Record<string, unknown> | null>(null);
   let showTOC = $state(initialState.tocVisible);
   let mode = $state<'document' | 'presentation'>(initialState.mode);
+  let layoutOverride = $state<LayoutOverride>(initialState.layoutOverride);
+  let model = $derived(createDocumentModel(html, frontmatter));
+  let selectedLayout = $derived(resolveLayout(model.detectedLayout, frontmatter, layoutOverride));
 
-  // Save state when it changes
   $effect(() => {
-    saveState({ tocVisible: showTOC, mode });
+    saveState({ tocVisible: showTOC, mode, layoutOverride });
   });
 
-  // Render mermaid blocks and restore collapsible state after HTML updates
   $effect(() => {
     if (html && mode === 'document') {
+      selectedLayout;
       tick().then(() => {
         renderMermaidBlocks();
         restoreCollapsedState();
@@ -35,6 +43,7 @@
     switch (message.type) {
       case 'update':
         html = message.html;
+        frontmatter = message.frontmatter;
         break;
       case 'scrollTo':
         if (mode === 'document') {
@@ -45,7 +54,6 @@
         showTOC = message.config.showTOC;
         break;
       case 'themeChanged':
-        // Theme auto-syncs via CSS variables, no action needed
         break;
       case 'togglePresentation':
         toggleMode();
@@ -57,8 +65,11 @@
     mode = mode === 'document' ? 'presentation' : 'document';
   }
 
+  function setLayoutOverride(next: LayoutOverride) {
+    layoutOverride = next;
+  }
+
   function handleKeydown(e: KeyboardEvent) {
-    // Escape exits presentation mode
     if (e.key === 'Escape' && mode === 'presentation') {
       e.preventDefault();
       mode = 'document';
@@ -70,7 +81,6 @@
     setupCheckboxHandler();
     setupCollapsibleHeadings();
 
-    // Restore scroll position
     const main = document.querySelector('main');
     if (main && initialState.scrollPosition > 0) {
       requestAnimationFrame(() => {
@@ -78,7 +88,6 @@
       });
     }
 
-    // Save scroll position periodically
     let saveTimeout: number;
     main?.addEventListener('scroll', () => {
       clearTimeout(saveTimeout);
@@ -90,7 +99,6 @@
     });
   });
 
-  // Notify host that webview is ready
   postMessage({ type: 'ready' });
 </script>
 
@@ -102,75 +110,42 @@
     ✕
   </button>
 {:else}
-  <div class="layout" class:with-toc={showTOC}>
-    <main>
-      <div class="toolbar">
-        <button class="toolbar-btn" onclick={toggleMode} title="Presentation mode">
-          ▶ Slides
-        </button>
-      </div>
-      <div class="markdown-body">
-        {@html html}
-      </div>
+  <div class="preview-root">
+    <LayoutToolbar
+      override={layoutOverride}
+      detectedLayout={model.detectedLayout}
+      currentLayout={selectedLayout}
+      onOverrideChange={setLayoutOverride}
+      onTogglePresentation={toggleMode}
+    />
+
+    <main class="layout-scroll-root" data-active-layout={selectedLayout}>
+      {#if selectedLayout === 'magazine'}
+        <MagazineLayout {model} {showTOC} />
+      {:else if selectedLayout === 'docs'}
+        <DocsLayout {model} {showTOC} />
+      {:else if selectedLayout === 'story'}
+        <StoryLayout {model} {showTOC} />
+      {:else}
+        <DashboardLayout {model} {showTOC} />
+      {/if}
     </main>
-    <TableOfContents {html} visible={showTOC} />
   </div>
 {/if}
 
 <style>
-  .layout {
-    display: flex;
+  .preview-root {
     min-height: 100vh;
     background: var(--md-bg-primary);
   }
 
-  main {
-    flex: 1;
-    overflow-y: auto;
+  .layout-scroll-root {
     height: 100vh;
+    overflow-y: auto;
     scroll-behavior: smooth;
+    padding-top: 3.25rem;
   }
 
-  .layout.with-toc main {
-    margin-right: 220px;
-  }
-
-  /* Toolbar */
-  .toolbar {
-    position: sticky;
-    top: 0;
-    z-index: 20;
-    display: flex;
-    justify-content: flex-end;
-    padding: 0.5rem 1rem;
-    background: var(--md-bg-primary);
-    border-bottom: 1px solid var(--md-border);
-    opacity: 0.6;
-    transition: opacity 0.2s ease;
-  }
-
-  .toolbar:hover {
-    opacity: 1;
-  }
-
-  .toolbar-btn {
-    all: unset;
-    cursor: pointer;
-    padding: 0.3rem 0.8rem;
-    font-size: 0.75rem;
-    color: var(--md-fg-secondary);
-    background: var(--md-bg-secondary);
-    border: 1px solid var(--md-border);
-    border-radius: 4px;
-    transition: color 0.2s ease, border-color 0.2s ease;
-  }
-
-  .toolbar-btn:hover {
-    color: var(--md-accent);
-    border-color: var(--md-accent);
-  }
-
-  /* Exit presentation button */
   .exit-presentation {
     all: unset;
     cursor: pointer;
