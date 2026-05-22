@@ -1,9 +1,11 @@
 import * as vscode from 'vscode';
 import * as path from 'path';
-import type { WebviewToHostMessage } from '../shared/messages';
+import type { HostToWebviewMessage, WebviewToHostMessage } from '../shared/messages';
 import { MarkdownEngine } from './markdown-engine';
 import { ScrollSync } from './scroll-sync';
 import { AssetResolver } from './asset-resolver';
+
+const DEFAULT_THEME_ID = 'catppuccin-mocha';
 
 export class PreviewProvider {
   private panel: vscode.WebviewPanel | undefined;
@@ -143,12 +145,15 @@ export class PreviewProvider {
     const resolver = new AssetResolver(this.panel.webview, editor.document.uri);
     const resolvedHtml = resolver.resolveAssets(html);
 
-    this.panel.webview.postMessage({
+    const message = {
       type: 'update',
       html: resolvedHtml,
       sourceMap,
       frontmatter,
-    });
+      themeId: DEFAULT_THEME_ID,
+    } satisfies HostToWebviewMessage;
+
+    this.panel.webview.postMessage(message);
   }
 
   /**

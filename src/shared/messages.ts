@@ -1,8 +1,7 @@
 // Messages from Extension Host → Webview
 export type HostToWebviewMessage =
-  | { type: 'update'; html: string; sourceMap: SourceMapEntry[]; frontmatter: Record<string, unknown> | null }
+  | { type: 'update'; html: string; sourceMap: SourceMapEntry[]; frontmatter: Record<string, unknown> | null; themeId: string }
   | { type: 'scrollTo'; line: number }
-  | { type: 'themeChanged' }
   | { type: 'configChanged'; config: PreviewConfig }
   | { type: 'togglePresentation' };
 
@@ -12,6 +11,7 @@ export type WebviewToHostMessage =
   | { type: 'openFile'; path: string }
   | { type: 'scrollSync'; line: number }
   | { type: 'checkboxToggle'; line: number; checked: boolean }
+  | { type: 'setTheme'; themeId: string }
   | { type: 'ready' };
 
 export interface SourceMapEntry {

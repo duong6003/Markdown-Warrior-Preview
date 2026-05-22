@@ -118,8 +118,6 @@
       case 'configChanged':
         showTOC = message.config.showTOC;
         break;
-      case 'themeChanged':
-        break;
       case 'togglePresentation':
         toggleMode();
         break;
