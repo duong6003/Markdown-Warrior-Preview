@@ -18,6 +18,7 @@ describe('layout engine', () => {
     expect(model.title).toBe('Beautiful Markdown');
     expect(model.description).toContain('long intro paragraph');
     expect(model.sections.length).toBeGreaterThan(0);
+    expect(model.sections[0].sourceLine).toBe(0);
   });
 
   it('detects story layout from repeated horizontal-rule sections', () => {

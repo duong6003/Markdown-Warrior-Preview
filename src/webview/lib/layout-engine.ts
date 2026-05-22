@@ -170,7 +170,7 @@ function extractSections(html: string): DocumentSection[] {
       title: stripTags(match[3]).trim() || `Section ${index + 1}`,
       level: Number(match[1]),
       html: sectionHtml,
-      sourceLine: Number(extractAttribute(attrs, 'data-source-line')) || undefined,
+      sourceLine: parseOptionalNumber(extractAttribute(attrs, 'data-source-line')),
       blockTypes: extractBlockTypes(sectionHtml),
     };
   });
@@ -221,6 +221,15 @@ function extractFirstTagText(html: string, tag: string): string {
 function extractAttribute(attrs: string, name: string): string {
   const match = attrs.match(new RegExp(`${name}="([^"]*)"`, 'i'));
   return match?.[1] ?? '';
+}
+
+function parseOptionalNumber(value: string): number | undefined {
+  if (!value.trim()) {
+    return undefined;
+  }
+
+  const parsed = Number(value);
+  return Number.isNaN(parsed) ? undefined : parsed;
 }
 
 function countShortSections(html: string): number {
