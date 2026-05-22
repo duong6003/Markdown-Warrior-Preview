@@ -7,6 +7,7 @@ export default defineConfig({
   root: 'src/webview',
   build: {
     outDir: '../../dist/webview',
+    chunkSizeWarningLimit: 1000,
     rollupOptions: {
       input: resolve(__dirname, 'src/webview/index.html'),
       output: {

@@ -7,8 +7,27 @@
 - `clipDetect` webview action that measures rendered content and reacts to viewport resizing.
 
 ### Changed
+- Cards render at natural height by default — no longer clipped on every section.
+- "Show more" toggle only appears when content genuinely exceeds 65 % of viewport height.
+- Docs layout removes card clipping entirely for a continuous scroll reading experience.
+- Dashboard, Magazine, and Story use a `ResizeObserver` + viewport resize listener to detect overflow.
 - Docs layout now renders sections at natural height for full scroll reading.
 - Balanced-card clipping now applies only when rendered content exceeds the viewport-relative threshold.
+
+## [0.4.0] - 2026-05-22
+
+### Added
+- Shared balanced-card behavior across Docs, Magazine, Story, and Dashboard.
+- Consistent card min-widths and min-heights via shared CSS tokens.
+- Expandable card bodies with "Show more / Show less" accessibility toggles.
+- `balanced-card.ts` helper for sanitized body IDs and toggle labels.
+
+## [0.3.0] - 2026-05-22
+
+### Changed
+- Rebuilt all rich layouts around a unified token-first visual system.
+- Shared spacing scale, type scale, radius, and shadow tokens in `layouts.css`.
+- Proportional grids and consistent card/header/nav interaction states across all layouts.
 
 ## [0.2.0] - 2026-05-22
 
