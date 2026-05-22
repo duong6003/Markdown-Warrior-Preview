@@ -2,6 +2,7 @@
   import type { DocumentModel } from '../types/layout';
 
   let { model, showTOC = true }: { model: DocumentModel; showTOC?: boolean } = $props();
+  let hasSidebar = $derived(showTOC && model.sections.length > 1);
 
   function scrollToSection(sectionKey: string, sectionId: string) {
     const escapedKey =
@@ -14,8 +15,8 @@
   }
 </script>
 
-<div class="docs-layout" data-layout="docs">
-  {#if showTOC && model.sections.length > 1}
+<div class="docs-layout" class:no-sidebar={!hasSidebar} data-layout="docs">
+  {#if hasSidebar}
     <aside class="docs-sidebar" data-reveal>
       <p class="docs-eyebrow">Docs</p>
       <h2>{model.title}</h2>
@@ -69,13 +70,22 @@
     gap: var(--layout-gap);
   }
 
+  .docs-layout.no-sidebar {
+    grid-template-columns: 1fr;
+  }
+
   .docs-content.rich-layout {
+    grid-column: auto;
     width: 100%;
     min-width: 0;
     margin: 0;
     padding: 0;
     display: grid;
     gap: var(--layout-gap);
+  }
+
+  .docs-layout.no-sidebar .docs-content {
+    grid-column: 1 / -1;
   }
 
   .docs-sidebar {

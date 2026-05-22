@@ -39,12 +39,22 @@ describe('DocsLayout rich shell', () => {
       source.indexOf('document.getElementById(sectionId)'),
     );
     expect(source).toContain("scrollIntoView({ behavior: 'smooth', block: 'start' })");
-    expect(source).toContain('{#if showTOC && model.sections.length > 1}');
+    expect(source).toContain('{#if hasSidebar}');
     expect(source).toContain('class="docs-sidebar"');
     expect(source).toContain('Docs');
     expect(source).toContain('<nav aria-label="Document sections">');
     expect(source).toContain('onclick={() => scrollToSection(section.key, section.id)}');
     expect(source).toContain('class:deep={section.level > 2}');
     expect(source).toContain('{section.title}');
+  });
+
+  it('expands content to one column when the docs sidebar is omitted', () => {
+    expect(source).toContain('let hasSidebar = $derived(showTOC && model.sections.length > 1)');
+    expect(source).toContain('class:no-sidebar={!hasSidebar}');
+    expect(source).toContain('{#if hasSidebar}');
+    expect(source).not.toContain('{#if showTOC && model.sections.length > 1}');
+    expect(source).toContain('.docs-layout.no-sidebar');
+    expect(source).toContain('grid-template-columns: 1fr');
+    expect(source).toContain('grid-column: 1 / -1');
   });
 });
