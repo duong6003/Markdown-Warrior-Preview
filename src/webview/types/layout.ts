@@ -27,6 +27,7 @@ export interface LayoutSignals extends DocumentStats {
 }
 
 export interface DocumentSection {
+  key: string;
   id: string;
   title: string;
   level: number;

@@ -149,6 +149,7 @@ function extractSections(html: string): DocumentSection[] {
   if (headings.length === 0) {
     return [
       {
+        key: 'document-0',
         id: 'document',
         title: 'Document',
         level: 1,
@@ -164,6 +165,7 @@ function extractSections(html: string): DocumentSection[] {
 
   if (introHtml) {
     sections.push({
+      key: 'intro-0',
       id: 'document-intro',
       title: 'Introduction',
       level: 1,
@@ -181,6 +183,7 @@ function extractSections(html: string): DocumentSection[] {
     const attrs = match[2] ?? '';
 
     return {
+      key: `section-${index}`,
       id: extractAttribute(attrs, 'id') || `section-${index + 1}`,
       title: stripTags(match[3]).trim() || `Section ${index + 1}`,
       level: Number(match[1]),

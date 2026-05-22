@@ -24,7 +24,7 @@
 
   <div class="magazine-grid">
     <main class="magazine-content">
-      {#each model.sections as section (section.id)}
+      {#each model.sections as section (section.key)}
         <section
           class="magazine-section layout-card markdown-body"
           data-section-id={section.id}
@@ -40,7 +40,7 @@
       <aside class="magazine-rail" data-reveal>
         <h2>Sections</h2>
         <nav aria-label="Magazine sections">
-          {#each model.sections as section (section.id)}
+          {#each model.sections as section (section.key)}
             <button type="button" onclick={() => scrollToSection(section.id)}>
               {section.title}
             </button>
