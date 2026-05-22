@@ -44,6 +44,7 @@ export function setupScrollReporter(containerEl?: HTMLElement) {
 
   const container = containerEl ?? (document.querySelector('main') as HTMLElement | null);
   if (!container) return;
+  const scrollContainer: HTMLElement = container;
 
   let ticking = false;
 
@@ -52,8 +53,8 @@ export function setupScrollReporter(containerEl?: HTMLElement) {
     ticking = true;
 
     requestAnimationFrame(() => {
-      const elements = container.querySelectorAll('[data-source-line]');
-      const containerRect = container.getBoundingClientRect();
+      const elements = scrollContainer.querySelectorAll('[data-source-line]');
+      const containerRect = scrollContainer.getBoundingClientRect();
 
       for (const el of elements) {
         const rect = el.getBoundingClientRect();
@@ -67,6 +68,6 @@ export function setupScrollReporter(containerEl?: HTMLElement) {
     });
   }
 
-  container.addEventListener('scroll', onScroll);
-  cleanupScrollReporter = () => container.removeEventListener('scroll', onScroll);
+  scrollContainer.addEventListener('scroll', onScroll);
+  cleanupScrollReporter = () => scrollContainer.removeEventListener('scroll', onScroll);
 }
