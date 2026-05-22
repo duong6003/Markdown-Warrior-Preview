@@ -30,9 +30,8 @@
   --shadow-md: 0 4px 6px rgba(0, 0, 0, 0.05), 0 10px 15px rgba(0, 0, 0, 0.1);
   --shadow-lg: 0 10px 15px rgba(0, 0, 0, 0.04), 0 20px 25px rgba(0, 0, 0, 0.1);
 
-  --balanced-card-min-width: 18rem;
-  --balanced-card-min-height: clamp(18rem, 34vh, 24rem);
-  --balanced-card-preview-height: clamp(13rem, 28vh, 19rem);
+  --balanced-card-min-width: 22rem;
+  --balanced-card-clip-height: clamp(32rem, 65vh, 52rem);
   --balanced-card-max-height: min(72vh, 48rem);
   --balanced-card-body-gap: var(--space-4);
 }
@@ -177,7 +176,6 @@
   display: flex;
   flex-direction: column;
   min-width: 0;
-  min-height: var(--balanced-card-min-height);
   overflow: hidden;
 }
 
@@ -185,17 +183,20 @@
   position: relative;
   flex: 1 1 auto;
   min-height: 0;
-  max-height: var(--balanced-card-preview-height);
+}
+
+.balanced-card--clippable .balanced-card__body {
+  max-height: var(--balanced-card-clip-height);
   overflow: auto;
   scrollbar-width: thin;
   transition: max-height 0.2s ease;
 }
 
-.balanced-card--expanded .balanced-card__body {
+.balanced-card--clippable.balanced-card--expanded .balanced-card__body {
   max-height: var(--balanced-card-max-height);
 }
 
-.balanced-card__body::after {
+.balanced-card--clippable:not(.balanced-card--expanded) .balanced-card__body::after {
   content: '';
   position: sticky;
   bottom: 0;
@@ -208,10 +209,6 @@
     transparent,
     color-mix(in srgb, var(--md-bg-secondary) 96%, transparent)
   );
-}
-
-.balanced-card--expanded .balanced-card__body::after {
-  display: none;
 }
 
 .balanced-card__toggle {
@@ -330,8 +327,6 @@
   }
 
   :root {
-    --balanced-card-min-height: 0;
-    --balanced-card-preview-height: min(62vh, 28rem);
     --balanced-card-max-height: none;
   }
 
