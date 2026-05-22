@@ -3,8 +3,12 @@ node_modules/**
 src/**
 docs/**
 .kiro/**
+.claude/**
+tests/**
 *.ts
 !dist/**
 vite.config.ts
 tsconfig*.json
 .gitignore
+*.out
+svelte.config.js

@@ -5,10 +5,18 @@ import { MarkdownEngine } from './markdown-engine';
 
 export async function activate(context: vscode.ExtensionContext) {
   const previewProvider = new PreviewProvider(context.extensionUri);
-  await previewProvider.initialize();
+  try {
+    await previewProvider.initialize();
+  } catch (err) {
+    console.error('[MarkdownWarrior] previewProvider.initialize failed:', err);
+  }
 
   const engine = new MarkdownEngine();
-  await engine.initialize();
+  try {
+    await engine.initialize();
+  } catch (err) {
+    console.error('[MarkdownWarrior] engine.initialize failed:', err);
+  }
   const exporter = new Exporter(engine);
 
   const openPreviewCmd = vscode.commands.registerCommand(

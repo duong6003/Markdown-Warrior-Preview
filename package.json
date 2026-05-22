@@ -2,7 +2,7 @@
   "name": "markdown-warrior-preview",
   "displayName": "MarkdownWarriorPreview",
   "description": "A modern, beautiful markdown preview with presentation mode for VS Code",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "publisher": "Dng",
   "repository": {
     "type": "git",
@@ -94,9 +94,9 @@
     }
   },
   "scripts": {
-    "vscode:prepublish": "npm run build",
+    "vscode:prepublish": "npm run build:extension && npm run build:webview",
     "build": "npm run build:extension && npm run build:webview",
-    "build:extension": "esbuild src/extension/extension.ts --bundle --outfile=dist/extension/extension.js --external:vscode --format=cjs --platform=node",
+    "build:extension": "esbuild ././src/extension/extension.ts --bundle --outfile=dist/extension/extension.js --external:vscode --format=cjs --platform=node",
     "build:webview": "vite build",
     "watch:extension": "esbuild src/extension/extension.ts --bundle --outfile=dist/extension/extension.js --external:vscode --format=cjs --platform=node --watch",
     "dev": "concurrently \"npm run watch:extension\" \"vite build --watch\"",
