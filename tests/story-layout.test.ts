@@ -11,7 +11,10 @@ describe('StoryLayout rich shell', () => {
     });
 
     expect(source).toContain('let { model, showTOC }');
+    expect(source).toContain("import { balancedCardBodyId, balancedCardToggleLabel } from '../lib/balanced-card';");
     expect(source).toContain('let hasDots = $derived(showTOC && model.sections.length > 1)');
+    expect(source).toContain('let expanded = $state<Record<string, boolean>>({});');
+    expect(source).toContain('function toggleSection(sectionKey: string)');
     expect(source).toContain('class="story-layout"');
     expect(source).toContain('data-layout="story"');
     expect(source).toContain('{#if hasDots}');
@@ -28,7 +31,14 @@ describe('StoryLayout rich shell', () => {
     expect(source).toContain('data-source-line={section.sourceLine}');
     expect(source).toContain('class="story-section__number"');
     expect(source).toContain('{formatSectionNumber(index)}');
-    expect(source).toContain('class="story-section__content markdown-body lc-card"');
+    expect(source).toContain('class="story-section__content lc-card balanced-card balanced-card--preview"');
+    expect(source).toContain('class:balanced-card--expanded={expanded[section.key]}');
+    expect(source).toContain("balancedCardBodyId('story', section.key)");
+    expect(source).toContain('class="story-section__body balanced-card__body markdown-body"');
+    expect(source).toContain('class="balanced-card__toggle"');
+    expect(source).toContain('aria-expanded={expanded[section.key] ?');
+    expect(source).toContain('balancedCardToggleLabel(Boolean(expanded[section.key]))');
+    expect(source).not.toContain('class="story-section__content markdown-body lc-card"');
     expect(source).toContain('{@html section.html}');
     expect(source).not.toContain('layout-card');
   });
@@ -66,14 +76,17 @@ describe('StoryLayout rich shell', () => {
     expect(source).toContain('position: fixed;');
     expect(source).toContain('max-height: calc(100vh - var(--space-8));');
     expect(source).toContain('overflow-y: auto;');
-    expect(source).toContain(':global(.story-section__content h1)');
-    expect(source).toContain(':global(.story-section__content h2)');
+    expect(source).toContain('.story-section__body {');
+    expect(source).toContain('padding: var(--space-section-sm);');
+    expect(source).toContain(':global(.story-section__body h1)');
+    expect(source).toContain(':global(.story-section__body h2)');
     expect(source).toContain('font-size: var(--text-hero);');
-    expect(source).toContain(':global(.story-section__content p)');
+    expect(source).toContain(':global(.story-section__body img)');
+    expect(source).toContain(':global(.story-section__body p)');
     expect(source).toContain('font-size: var(--text-lg);');
     expect(source).toContain('border-radius: var(--radius-md);');
     expect(source).toContain('box-shadow: var(--shadow-sm);');
-    expect(source).toContain(':global(.story-section__content hr)');
+    expect(source).toContain(':global(.story-section__body hr)');
     expect(source).toContain('display: none;');
     expect(source).toContain('@media (max-width: 760px)');
     expect(source).toContain('grid-template-columns: 1fr;');

@@ -11,6 +11,7 @@ describe('DashboardLayout rich shell', () => {
     });
 
     expect(source).toContain('let { model, showTOC }');
+    expect(source).toContain("import { balancedCardBodyId, balancedCardToggleLabel } from '../lib/balanced-card';");
     expect(source).toContain('let taskPercent = $derived');
     expect(source).toContain('class="dashboard-layout rich-layout"');
     expect(source).toContain('data-layout="dashboard"');
@@ -29,18 +30,22 @@ describe('DashboardLayout rich shell', () => {
     expect(source).toContain('aria-label="Dashboard sections"');
     expect(source).toContain('{#each model.sections as section (section.key)}');
     expect(source).not.toContain('{#each model.sections as section (section.id)}');
-    expect(source).toContain('class="dashboard-card lc-card"');
-    expect(source).toContain('class:expanded={expanded[section.key]}');
+    expect(source).toContain('class="dashboard-card lc-card balanced-card balanced-card--preview"');
+    expect(source).toContain('class:balanced-card--expanded={expanded[section.key]}');
+    expect(source).toContain("balancedCardBodyId('dashboard', section.key)");
     expect(source).toContain('data-section-key={section.key}');
     expect(source).toContain('data-section-id={section.id}');
     expect(source).not.toMatch(/\s+id=\{section\.id\}/);
     expect(source).toContain('data-source-line={section.sourceLine}');
-    expect(source).toContain('aria-pressed={expanded[section.key] ?');
-    expect(source).toContain('aria-controls={dashboardBodyId(section.key)}');
+    expect(source).toContain('class="balanced-card__toggle"');
+    expect(source).toContain('aria-expanded={expanded[section.key] ?');
+    expect(source).toContain('aria-controls={balancedCardBodyId(');
     expect(source).toContain('onclick={() => toggleSection(section.key)}');
     expect(source).toContain('{section.blockTypes.join');
-    expect(source).toContain('class="dashboard-card__body markdown-body"');
-    expect(source).toContain('id={dashboardBodyId(section.key)}');
+    expect(source).toContain('class="dashboard-card__body balanced-card__body markdown-body"');
+    expect(source).toContain('balancedCardToggleLabel(Boolean(expanded[section.key]))');
+    expect(source).not.toContain('class:expanded={expanded[section.key]}');
+    expect(source).not.toContain('aria-pressed={expanded[section.key] ?');
     expect(source).not.toContain('aria-hidden={!expanded[section.key]}');
     expect(source).not.toContain('inert={expanded[section.key] ? undefined : true}');
     expect(source).toContain('{@html section.html}');
@@ -49,11 +54,11 @@ describe('DashboardLayout rich shell', () => {
 
   it('defines adaptive dashboard grids and semantic collapsed card bodies', () => {
     expect(source).toContain('grid-template-columns: repeat(auto-fit, minmax(10rem, 1fr));');
-    expect(source).toContain('grid-template-columns: repeat(auto-fill, minmax(22rem, 1fr));');
-    expect(source).toContain('max-height: 18rem;');
-    expect(source).toMatch(/\.dashboard-card__body\s*\{[^}]*overflow: auto;/);
-    expect(source).toContain('.dashboard-card.expanded .dashboard-card__body');
-    expect(source).toContain('max-height: none;');
+    expect(source).toContain('grid-template-columns: repeat(auto-fill, minmax(var(--balanced-card-min-width), 1fr));');
+    expect(source).toContain('.dashboard-card__body {');
+    expect(source).toContain('padding: var(--space-4) var(--space-6) 0;');
+    expect(source).not.toContain('max-height: 18rem;');
+    expect(source).not.toContain('.dashboard-card.expanded .dashboard-card__body');
     expect(source).toContain(':global(.dashboard-card__body table)');
     expect(source).toContain(':global(.dashboard-card__body pre)');
     expect(source).toContain('@media (max-width: 760px)');

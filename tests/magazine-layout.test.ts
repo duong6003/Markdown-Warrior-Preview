@@ -10,6 +10,9 @@ describe('MagazineLayout rich shell', () => {
       generate: 'client',
     });
 
+    expect(source).toContain("import { balancedCardBodyId, balancedCardToggleLabel } from '../lib/balanced-card';");
+    expect(source).toContain('let expanded = $state<Record<string, boolean>>({});');
+    expect(source).toContain('function toggleSection(sectionKey: string)');
     expect(source).toContain('data-layout="magazine"');
     expect(source).toContain('class="magazine-layout rich-layout"');
     expect(source).toContain('class="magazine-hero lc-card--hero"');
@@ -20,7 +23,14 @@ describe('MagazineLayout rich shell', () => {
     expect(source).not.toContain('<main class="magazine-content">');
     expect(source).toContain('{#each model.sections as section (section.key)}');
     expect(source).not.toContain('{#each model.sections as section (section.id)}');
-    expect(source).toContain('class="magazine-section lc-card markdown-body"');
+    expect(source).toContain('class="magazine-section lc-card balanced-card balanced-card--preview"');
+    expect(source).toContain('class:balanced-card--expanded={expanded[section.key]}');
+    expect(source).toContain("balancedCardBodyId('magazine', section.key)");
+    expect(source).toContain('class="magazine-section__body balanced-card__body markdown-body"');
+    expect(source).toContain('class="balanced-card__toggle"');
+    expect(source).toContain('aria-expanded={expanded[section.key] ?');
+    expect(source).toContain('balancedCardToggleLabel(Boolean(expanded[section.key]))');
+    expect(source).not.toContain('class="magazine-section lc-card markdown-body"');
     expect(source).toContain('data-section-key={section.key}');
     expect(source).toContain('data-section-id={section.id}');
     expect(source).not.toMatch(/\s+id=\{section\.id\}/);
@@ -53,6 +63,10 @@ describe('MagazineLayout rich shell', () => {
     expect(source).toContain('font-size: var(--text-lg);');
     expect(source).toContain('grid-template-columns: minmax(0, 1fr) clamp(14rem, 24%, 18rem);');
     expect(source).toContain('font: 700 var(--text-xs) / 1.4 var(--md-font-body);');
+    expect(source).toContain('.magazine-section__body {');
+    expect(source).toContain('padding: var(--space-section-sm);');
+    expect(source).toContain(':global(.magazine-section__body img)');
+    expect(source).toContain(':global(.magazine-section__body table)');
     expect(source).toContain('font-size: var(--text-2xl);');
     expect(source).toContain('border-radius: var(--radius-md);');
     expect(source).not.toContain('--layout-');
