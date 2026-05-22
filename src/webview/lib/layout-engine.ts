@@ -149,6 +149,7 @@ function extractSections(html: string): DocumentSection[] {
   if (headings.length === 0) {
     return [
       {
+        key: 'document-0',
         id: 'document',
         title: 'Document',
         level: 1,
@@ -158,7 +159,23 @@ function extractSections(html: string): DocumentSection[] {
     ];
   }
 
-  return headings.map((match, index) => {
+  const sections: DocumentSection[] = [];
+  const firstHeadingStart = headings[0].index ?? 0;
+  const introHtml = html.slice(0, firstHeadingStart).trim();
+
+  if (introHtml) {
+    sections.push({
+      key: 'intro-0',
+      id: 'document-intro',
+      title: 'Introduction',
+      level: 1,
+      html: introHtml,
+      sourceLine: extractFirstSourceLine(introHtml),
+      blockTypes: extractBlockTypes(introHtml),
+    });
+  }
+
+  sections.push(...headings.map((match, index) => {
     const next = headings[index + 1];
     const start = match.index ?? 0;
     const end = next?.index ?? html.length;
@@ -166,14 +183,17 @@ function extractSections(html: string): DocumentSection[] {
     const attrs = match[2] ?? '';
 
     return {
+      key: `section-${index}`,
       id: extractAttribute(attrs, 'id') || `section-${index + 1}`,
       title: stripTags(match[3]).trim() || `Section ${index + 1}`,
       level: Number(match[1]),
       html: sectionHtml,
-      sourceLine: Number(extractAttribute(attrs, 'data-source-line')) || undefined,
+      sourceLine: parseOptionalNumber(extractAttribute(attrs, 'data-source-line')),
       blockTypes: extractBlockTypes(sectionHtml),
     };
-  });
+  }));
+
+  return sections;
 }
 
 function extractBlockTypes(html: string): string[] {
@@ -221,6 +241,20 @@ function extractFirstTagText(html: string, tag: string): string {
 function extractAttribute(attrs: string, name: string): string {
   const match = attrs.match(new RegExp(`${name}="([^"]*)"`, 'i'));
   return match?.[1] ?? '';
+}
+
+function extractFirstSourceLine(html: string): number | undefined {
+  const match = html.match(/\bdata-source-line="([^"]*)"/i);
+  return parseOptionalNumber(match?.[1] ?? '');
+}
+
+function parseOptionalNumber(value: string): number | undefined {
+  if (!value.trim()) {
+    return undefined;
+  }
+
+  const parsed = Number(value);
+  return Number.isNaN(parsed) ? undefined : parsed;
 }
 
 function countShortSections(html: string): number {

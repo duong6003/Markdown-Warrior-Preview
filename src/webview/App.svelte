@@ -3,6 +3,7 @@
   import { onMessage, postMessage } from './lib/message-bridge';
   import { scrollToLine, setupScrollReporter } from './lib/source-map';
   import { renderMermaidBlocks } from './lib/mermaid-renderer';
+  import { setupLayoutReveal, teardownLayoutReveal } from './lib/layout-reveal';
   import { setupCheckboxHandler } from './lib/checkbox-handler';
   import { setupCollapsibleHeadings, restoreCollapsedState } from './lib/collapsible-headings';
   import { createDocumentModel, resolveLayout } from './lib/layout-engine';
@@ -30,45 +31,77 @@
   // Cleanup for the per-session scroll-position save listener on <main>.
   let cleanupScrollSave: (() => void) | null = null;
 
+  function clearScrollSaveListener() {
+    cleanupScrollSave?.();
+    cleanupScrollSave = null;
+  }
+
   $effect(() => {
     saveState({ tocVisible: showTOC, mode, layoutOverride });
   });
 
   $effect(() => {
-    if (html && mode === 'document' && selectedLayout) {
-      tick().then(() => {
-        renderMermaidBlocks();
-        restoreCollapsedState();
+    let cancelled = false;
 
-        const main = document.querySelector('main') as HTMLElement | null;
-        if (!main) return;
-
-        // setupScrollReporter removes the previous listener before adding a new one,
-        // so re-running on layout/mode change is safe.
-        setupScrollReporter(main);
-
-        if (!scrollRestored) {
-          scrollRestored = true;
-          if (initialState.scrollPosition > 0) {
-            requestAnimationFrame(() => {
-              main.scrollTop = initialState.scrollPosition;
-            });
-          }
-        }
-
-        // Replace save listener when <main> is remounted (layout switch recreates the element).
-        cleanupScrollSave?.();
-        let saveTimeout: number;
-        function onScrollSave() {
-          clearTimeout(saveTimeout);
-          saveTimeout = window.setTimeout(() => {
-            saveState({ scrollPosition: main!.scrollTop });
-          }, 500);
-        }
-        main.addEventListener('scroll', onScrollSave);
-        cleanupScrollSave = () => main.removeEventListener('scroll', onScrollSave);
-      });
+    if (!(html && mode === 'document' && selectedLayout)) {
+      clearScrollSaveListener();
+      teardownLayoutReveal();
+      return;
     }
+
+    tick().then(() => {
+      if (cancelled) return;
+
+      renderMermaidBlocks();
+      restoreCollapsedState();
+      setupLayoutReveal();
+
+      const main = document.querySelector('main') as HTMLElement | null;
+      if (!main) return;
+
+      // setupScrollReporter removes the previous listener before adding a new one,
+      // so re-running on layout/mode change is safe.
+      setupScrollReporter(main);
+
+      if (!scrollRestored) {
+        scrollRestored = true;
+        if (initialState.scrollPosition > 0) {
+          requestAnimationFrame(() => {
+            if (!cancelled) {
+              main.scrollTop = initialState.scrollPosition;
+            }
+          });
+        }
+      }
+
+      // Replace save listener when <main> is remounted (layout switch recreates the element).
+      clearScrollSaveListener();
+      let saveTimeout: number | null = null;
+      function onScrollSave() {
+        if (saveTimeout !== null) {
+          clearTimeout(saveTimeout);
+        }
+        saveTimeout = window.setTimeout(() => {
+          if (!cancelled) {
+            saveState({ scrollPosition: main.scrollTop });
+          }
+        }, 500);
+      }
+      main.addEventListener('scroll', onScrollSave);
+      cleanupScrollSave = () => {
+        if (saveTimeout !== null) {
+          clearTimeout(saveTimeout);
+          saveTimeout = null;
+        }
+        main.removeEventListener('scroll', onScrollSave);
+      };
+    });
+
+    return () => {
+      cancelled = true;
+      clearScrollSaveListener();
+      teardownLayoutReveal();
+    };
   });
 
   onMessage((message) => {

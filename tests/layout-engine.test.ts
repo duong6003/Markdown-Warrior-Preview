@@ -18,6 +18,74 @@ describe('layout engine', () => {
     expect(model.title).toBe('Beautiful Markdown');
     expect(model.description).toContain('long intro paragraph');
     expect(model.sections.length).toBeGreaterThan(0);
+    expect(model.sections[0].sourceLine).toBe(0);
+  });
+
+  it('preserves content before the first section heading as an intro section', () => {
+    const html = `
+<p data-source-line="2">Lead text before any heading.</p>
+<blockquote data-source-line="4">Important framing quote.</blockquote>
+<h1 id="article-title" data-source-line="8">Article Title</h1>
+<p data-source-line="10">Article body.</p>
+`;
+
+    const model = createDocumentModel(html, null);
+
+    expect(model.sections[0]).toMatchObject({
+      id: 'document-intro',
+      title: 'Introduction',
+      level: 1,
+      sourceLine: 2,
+    });
+    expect(model.sections[0].html).toContain('Lead text before any heading.');
+    expect(model.sections[0].html).toContain('Important framing quote.');
+    expect(model.sections[0].blockTypes).toEqual(['paragraph', 'quote']);
+    expect(model.sections[1].id).toBe('article-title');
+  });
+
+  it('does not add an intro section when pre-heading content is empty whitespace', () => {
+    const html = `
+
+<h1 id="article-title" data-source-line="8">Article Title</h1>
+<p data-source-line="10">Article body.</p>
+`;
+
+    const model = createDocumentModel(html, null);
+
+    expect(model.sections[0].id).toBe('article-title');
+    expect(model.sections).toHaveLength(1);
+  });
+
+  it('keeps duplicate section ids but assigns unique section keys', () => {
+    const html = `
+<h1 id="duplicate" data-source-line="0">Duplicate</h1>
+<p data-source-line="2">First section.</p>
+<h2 id="duplicate" data-source-line="4">Duplicate</h2>
+<p data-source-line="6">Second section.</p>
+`;
+
+    const model = createDocumentModel(html, null);
+
+    expect(model.sections.map((section) => section.id)).toEqual(['duplicate', 'duplicate']);
+    expect(model.sections.map((section) => section.key)).toEqual(['section-0', 'section-1']);
+    expect(new Set(model.sections.map((section) => section.key)).size).toBe(model.sections.length);
+  });
+
+  it('uses a unique intro key when intro id collides with a real heading id', () => {
+    const html = `
+<p data-source-line="0">Intro before heading.</p>
+<h1 id="document-intro" data-source-line="2">Document Intro</h1>
+<p data-source-line="4">Heading section.</p>
+`;
+
+    const model = createDocumentModel(html, null);
+
+    expect(model.sections.map((section) => section.id)).toEqual([
+      'document-intro',
+      'document-intro',
+    ]);
+    expect(model.sections.map((section) => section.key)).toEqual(['intro-0', 'section-0']);
+    expect(new Set(model.sections.map((section) => section.key)).size).toBe(model.sections.length);
   });
 
   it('detects story layout from repeated horizontal-rule sections', () => {
