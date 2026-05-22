@@ -3,11 +3,12 @@
 
   let { model, showTOC = true }: { model: DocumentModel; showTOC?: boolean } = $props();
 
-  function scrollToSection(id: string) {
-    const escapedId = typeof CSS !== 'undefined' && CSS.escape ? CSS.escape(id) : id.replace(/"/g, '\\"');
+  function scrollToSection(sectionKey: string, sectionId: string) {
+    const escapedKey =
+      typeof CSS !== 'undefined' && CSS.escape ? CSS.escape(sectionKey) : sectionKey.replace(/"/g, '\\"');
     const target =
-      document.getElementById(id) ??
-      document.querySelector<HTMLElement>(`[data-section-id="${escapedId}"]`);
+      document.querySelector<HTMLElement>(`[data-section-key="${escapedKey}"]`) ??
+      document.getElementById(sectionId);
 
     target?.scrollIntoView({ behavior: 'smooth', block: 'start' });
   }
@@ -27,6 +28,7 @@
       {#each model.sections as section (section.key)}
         <section
           class="magazine-section layout-card markdown-body"
+          data-section-key={section.key}
           data-section-id={section.id}
           data-reveal
           data-source-line={section.sourceLine}
@@ -41,7 +43,7 @@
         <h2>Sections</h2>
         <nav aria-label="Magazine sections">
           {#each model.sections as section (section.key)}
-            <button type="button" onclick={() => scrollToSection(section.id)}>
+            <button type="button" onclick={() => scrollToSection(section.key, section.id)}>
               {section.title}
             </button>
           {/each}
