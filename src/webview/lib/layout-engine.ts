@@ -158,7 +158,22 @@ function extractSections(html: string): DocumentSection[] {
     ];
   }
 
-  return headings.map((match, index) => {
+  const sections: DocumentSection[] = [];
+  const firstHeadingStart = headings[0].index ?? 0;
+  const introHtml = html.slice(0, firstHeadingStart).trim();
+
+  if (introHtml) {
+    sections.push({
+      id: 'document-intro',
+      title: 'Introduction',
+      level: 1,
+      html: introHtml,
+      sourceLine: extractFirstSourceLine(introHtml),
+      blockTypes: extractBlockTypes(introHtml),
+    });
+  }
+
+  sections.push(...headings.map((match, index) => {
     const next = headings[index + 1];
     const start = match.index ?? 0;
     const end = next?.index ?? html.length;
@@ -173,7 +188,9 @@ function extractSections(html: string): DocumentSection[] {
       sourceLine: parseOptionalNumber(extractAttribute(attrs, 'data-source-line')),
       blockTypes: extractBlockTypes(sectionHtml),
     };
-  });
+  }));
+
+  return sections;
 }
 
 function extractBlockTypes(html: string): string[] {
@@ -221,6 +238,11 @@ function extractFirstTagText(html: string, tag: string): string {
 function extractAttribute(attrs: string, name: string): string {
   const match = attrs.match(new RegExp(`${name}="([^"]*)"`, 'i'));
   return match?.[1] ?? '';
+}
+
+function extractFirstSourceLine(html: string): number | undefined {
+  const match = html.match(/\bdata-source-line="([^"]*)"/i);
+  return parseOptionalNumber(match?.[1] ?? '');
 }
 
 function parseOptionalNumber(value: string): number | undefined {

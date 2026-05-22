@@ -22,7 +22,7 @@
       {#each model.sections as section (section.id)}
         <section
           class="magazine-section layout-card markdown-body"
-          id={section.id}
+          data-section-id={section.id}
           data-reveal
           data-source-line={section.sourceLine}
         >

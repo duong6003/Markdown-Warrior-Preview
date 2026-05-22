@@ -21,6 +21,41 @@ describe('layout engine', () => {
     expect(model.sections[0].sourceLine).toBe(0);
   });
 
+  it('preserves content before the first section heading as an intro section', () => {
+    const html = `
+<p data-source-line="2">Lead text before any heading.</p>
+<blockquote data-source-line="4">Important framing quote.</blockquote>
+<h1 id="article-title" data-source-line="8">Article Title</h1>
+<p data-source-line="10">Article body.</p>
+`;
+
+    const model = createDocumentModel(html, null);
+
+    expect(model.sections[0]).toMatchObject({
+      id: 'document-intro',
+      title: 'Introduction',
+      level: 1,
+      sourceLine: 2,
+    });
+    expect(model.sections[0].html).toContain('Lead text before any heading.');
+    expect(model.sections[0].html).toContain('Important framing quote.');
+    expect(model.sections[0].blockTypes).toEqual(['paragraph', 'quote']);
+    expect(model.sections[1].id).toBe('article-title');
+  });
+
+  it('does not add an intro section when pre-heading content is empty whitespace', () => {
+    const html = `
+
+<h1 id="article-title" data-source-line="8">Article Title</h1>
+<p data-source-line="10">Article body.</p>
+`;
+
+    const model = createDocumentModel(html, null);
+
+    expect(model.sections[0].id).toBe('article-title');
+    expect(model.sections).toHaveLength(1);
+  });
+
   it('detects story layout from repeated horizontal-rule sections', () => {
     const html = `
 <h1 id="launch" data-source-line="0">Launch</h1>
