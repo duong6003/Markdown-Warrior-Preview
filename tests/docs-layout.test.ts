@@ -11,9 +11,9 @@ describe('DocsLayout rich shell', () => {
     });
 
     expect(source).toContain('let { model, showTOC = true }');
-    expect(source).toContain("import { balancedCardBodyId, balancedCardToggleLabel } from '../lib/balanced-card';");
-    expect(source).toContain('let expanded = $state<Record<string, boolean>>({});');
-    expect(source).toContain('function toggleSection(sectionKey: string)');
+    expect(source).not.toContain("import { balancedCardBodyId, balancedCardToggleLabel } from '../lib/balanced-card';");
+    expect(source).not.toContain('let expanded = $state<Record<string, boolean>>({});');
+    expect(source).not.toContain('function toggleSection(sectionKey: string)');
     expect(source).toContain('class="docs-layout"');
     expect(source).toContain('data-layout="docs"');
     expect(source).toContain('class="docs-content rich-layout"');
@@ -24,14 +24,14 @@ describe('DocsLayout rich shell', () => {
     expect(source).toContain('class="docs-sections"');
     expect(source).toContain('{#each model.sections as section (section.key)}');
     expect(source).not.toContain('{#each model.sections as section (section.id)}');
-    expect(source).toContain('class="docs-section lc-card balanced-card balanced-card--preview"');
-    expect(source).toContain('class:balanced-card--expanded={expanded[section.key]}');
-    expect(source).toContain("balancedCardBodyId('docs', section.key)");
-    expect(source).toContain('class="docs-section__body balanced-card__body markdown-body"');
-    expect(source).toContain('class="balanced-card__toggle"');
-    expect(source).toContain('aria-expanded={expanded[section.key] ?');
-    expect(source).toContain('balancedCardToggleLabel(Boolean(expanded[section.key]))');
-    expect(source).not.toContain('class="docs-section lc-card markdown-body"');
+    expect(source).toContain('class="docs-section lc-card"');
+    expect(source).not.toContain('balanced-card--preview');
+    expect(source).not.toContain('balanced-card--expanded');
+    expect(source).not.toContain('balancedCardBodyId');
+    expect(source).toContain('class="docs-section__body markdown-body"');
+    expect(source).not.toContain('class="balanced-card__toggle"');
+    expect(source).not.toContain('aria-expanded={expanded[section.key] ?');
+    expect(source).not.toContain('balancedCardToggleLabel');
     expect(source).toContain('data-section-key={section.key}');
     expect(source).toContain('data-section-id={section.id}');
     expect(source).not.toMatch(/\s+id=\{section\.id\}/);
