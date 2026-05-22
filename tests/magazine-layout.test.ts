@@ -28,6 +28,9 @@ describe('MagazineLayout rich shell', () => {
   it('shows a conditional section rail and scrolls sections smoothly', () => {
     expect(source).toContain('function scrollToSection(id: string)');
     expect(source).toContain('document.getElementById(id)');
+    expect(source).toContain('document.querySelector');
+    expect(source).toContain('[data-section-id="');
+    expect(source).toContain('CSS.escape');
     expect(source).toContain("scrollIntoView({ behavior: 'smooth', block: 'start' })");
     expect(source).toContain('{#if showTOC && model.sections.length > 1}');
     expect(source).toContain('class="magazine-rail"');

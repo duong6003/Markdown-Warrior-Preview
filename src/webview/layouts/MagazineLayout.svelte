@@ -4,7 +4,12 @@
   let { model, showTOC = true }: { model: DocumentModel; showTOC?: boolean } = $props();
 
   function scrollToSection(id: string) {
-    document.getElementById(id)?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    const escapedId = typeof CSS !== 'undefined' && CSS.escape ? CSS.escape(id) : id.replace(/"/g, '\\"');
+    const target =
+      document.getElementById(id) ??
+      document.querySelector<HTMLElement>(`[data-section-id="${escapedId}"]`);
+
+    target?.scrollIntoView({ behavior: 'smooth', block: 'start' });
   }
 </script>
 
