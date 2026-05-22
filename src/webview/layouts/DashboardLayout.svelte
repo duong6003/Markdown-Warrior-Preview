@@ -69,8 +69,6 @@
         <div
           id={dashboardBodyId(section.key)}
           class="dashboard-card__body markdown-body"
-          aria-hidden={!expanded[section.key]}
-          inert={expanded[section.key] ? undefined : true}
         >
           {@html section.html}
         </div>
@@ -195,7 +193,7 @@
   .dashboard-card__body {
     max-height: 320px;
     padding: 1rem 1.15rem 1.15rem;
-    overflow: hidden;
+    overflow: auto;
     transition: max-height 0.2s ease;
   }
 

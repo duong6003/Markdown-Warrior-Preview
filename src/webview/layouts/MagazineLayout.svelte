@@ -24,7 +24,7 @@
   </header>
 
   <div class="magazine-grid">
-    <main class="magazine-content">
+    <article class="magazine-content">
       {#each model.sections as section (section.key)}
         <section
           class="magazine-section layout-card markdown-body"
@@ -36,7 +36,7 @@
           {@html section.html}
         </section>
       {/each}
-    </main>
+    </article>
 
     {#if showTOC && model.sections.length > 1}
       <aside class="magazine-rail" data-reveal>

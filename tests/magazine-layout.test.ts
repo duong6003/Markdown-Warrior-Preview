@@ -16,7 +16,8 @@ describe('MagazineLayout rich shell', () => {
     expect(source).toContain('Markdown Warrior');
     expect(source).toContain('{model.title}');
     expect(source).toContain('model.description');
-    expect(source).toContain('class="magazine-content"');
+    expect(source).toContain('<article class="magazine-content">');
+    expect(source).not.toContain('<main class="magazine-content">');
     expect(source).toContain('{#each model.sections as section (section.key)}');
     expect(source).not.toContain('{#each model.sections as section (section.id)}');
     expect(source).toContain('class="magazine-section layout-card markdown-body"');

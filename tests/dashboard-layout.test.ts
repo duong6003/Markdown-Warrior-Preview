@@ -41,8 +41,8 @@ describe('DashboardLayout rich shell', () => {
     expect(source).toContain('{section.blockTypes.join');
     expect(source).toContain('class="dashboard-card__body markdown-body"');
     expect(source).toContain('id={dashboardBodyId(section.key)}');
-    expect(source).toContain('aria-hidden={!expanded[section.key]}');
-    expect(source).toContain('inert={expanded[section.key] ? undefined : true}');
+    expect(source).not.toContain('aria-hidden={!expanded[section.key]}');
+    expect(source).not.toContain('inert={expanded[section.key] ? undefined : true}');
     expect(source).toContain('{@html section.html}');
   });
 
@@ -53,6 +53,7 @@ describe('DashboardLayout rich shell', () => {
     expect(source).toContain('overflow: hidden;');
     expect(source).toContain('display: flex;');
     expect(source).toContain('max-height: 320px;');
+    expect(source).toMatch(/\.dashboard-card__body\s*\{[^}]*overflow: auto;/);
     expect(source).toContain('.dashboard-card.expanded .dashboard-card__body');
     expect(source).toContain('max-height: none;');
     expect(source).toContain(':global(.dashboard-card__body table)');
