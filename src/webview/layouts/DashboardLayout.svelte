@@ -57,7 +57,7 @@
         <button
           class="dashboard-card__header"
           type="button"
-          aria-expanded={expanded[section.key] ? 'true' : 'false'}
+          aria-pressed={expanded[section.key] ? 'true' : 'false'}
           aria-controls={dashboardBodyId(section.key)}
           onclick={() => toggleSection(section.key)}
         >

@@ -35,7 +35,7 @@ describe('DashboardLayout rich shell', () => {
     expect(source).toContain('data-section-id={section.id}');
     expect(source).not.toMatch(/\s+id=\{section\.id\}/);
     expect(source).toContain('data-source-line={section.sourceLine}');
-    expect(source).toContain('aria-expanded={expanded[section.key] ?');
+    expect(source).toContain('aria-pressed={expanded[section.key] ?');
     expect(source).toContain('aria-controls={dashboardBodyId(section.key)}');
     expect(source).toContain('onclick={() => toggleSection(section.key)}');
     expect(source).toContain('{section.blockTypes.join');
