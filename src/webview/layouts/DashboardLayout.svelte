@@ -1,9 +1,11 @@
 <script lang="ts">
   import { balancedCardBodyId, balancedCardToggleLabel } from '../lib/balanced-card';
+  import { clipDetect } from '../lib/clip-detect';
   import type { DocumentModel } from '../types/layout';
 
   let { model, showTOC }: { model: DocumentModel; showTOC: boolean } = $props();
   let expanded = $state<Record<string, boolean>>({});
+  let needsClip = $state<Record<string, boolean>>({});
   let taskPercent = $derived(
     model.stats.taskCount > 0 ? Math.round((model.stats.completedTaskCount / model.stats.taskCount) * 100) : null,
   );
@@ -42,9 +44,10 @@
   </section>
 
   <section class="dashboard-grid" aria-label="Dashboard sections">
-    {#each model.sections as section (section.key)}
-      <article
-        class="dashboard-card lc-card balanced-card balanced-card--preview"
+      {#each model.sections as section (section.key)}
+        <article
+        class="dashboard-card lc-card balanced-card"
+        class:balanced-card--clippable={needsClip[section.key]}
         class:balanced-card--expanded={expanded[section.key]}
         data-section-key={section.key}
         data-section-id={section.id}
@@ -60,18 +63,21 @@
         <div
           id={balancedCardBodyId('dashboard', section.key)}
           class="dashboard-card__body balanced-card__body markdown-body"
+          use:clipDetect={(needs: boolean) => { needsClip[section.key] = needs; }}
         >
           {@html section.html}
         </div>
-        <button
-          class="balanced-card__toggle"
-          type="button"
-          aria-expanded={expanded[section.key] ? 'true' : 'false'}
-          aria-controls={balancedCardBodyId('dashboard', section.key)}
-          onclick={() => toggleSection(section.key)}
-        >
-          {balancedCardToggleLabel(Boolean(expanded[section.key]))}
-        </button>
+        {#if needsClip[section.key]}
+          <button
+            class="balanced-card__toggle"
+            type="button"
+            aria-expanded={expanded[section.key] ? 'true' : 'false'}
+            aria-controls={balancedCardBodyId('dashboard', section.key)}
+            onclick={() => toggleSection(section.key)}
+          >
+            {balancedCardToggleLabel(Boolean(expanded[section.key]))}
+          </button>
+        {/if}
       </article>
     {/each}
   </section>
