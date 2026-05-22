@@ -47,7 +47,7 @@
         <div class="story-section__number" aria-hidden="true">
           {formatSectionNumber(index)}
         </div>
-        <div class="story-section__content markdown-body layout-card">
+        <div class="story-section__content markdown-body lc-card">
           {@html section.html}
         </div>
       </section>
@@ -58,50 +58,56 @@
 <style>
   .story-layout {
     position: relative;
-    width: min(100%, var(--layout-wide-max));
+    width: min(100%, 1180px);
     margin: 0 auto;
-    padding: clamp(1rem, 2.5vw, 2rem);
+    padding: var(--space-section-xl) var(--space-section-md) var(--space-section-md);
   }
 
   .story-sections {
     display: grid;
-    gap: clamp(1.5rem, 4vw, 3rem);
+    gap: var(--space-section-md);
     scroll-snap-type: y proximity;
   }
 
   .story-section {
     display: grid;
-    grid-template-columns: minmax(3rem, 6rem) minmax(0, 1fr);
+    grid-template-columns: clamp(5rem, 10vw, 8rem) minmax(0, 1fr);
     align-items: center;
-    gap: clamp(1rem, 3vw, 2rem);
-    min-height: min(42rem, calc(100vh - 3rem));
+    gap: var(--space-section-md);
+    min-height: min(32rem, 80vh);
     scroll-snap-align: start;
   }
 
   .story-section__number {
     justify-self: center;
     color: color-mix(in srgb, var(--md-accent) 78%, var(--md-fg-secondary) 22%);
-    font: 800 clamp(2.5rem, 8vw, 5.25rem) / 1 var(--md-font-heading, var(--md-font-body));
+    font: 800 var(--text-hero) / 1 var(--md-font-heading, var(--md-font-body));
     letter-spacing: 0;
+    opacity: 0.35;
     writing-mode: vertical-rl;
     text-orientation: mixed;
+    transition: opacity 0.2s ease;
+  }
+
+  .story-section:hover .story-section__number,
+  .story-section:focus-within .story-section__number {
+    opacity: 1;
   }
 
   .story-section__content {
     min-width: 0;
-    padding: clamp(1.35rem, 4vw, 3.25rem);
+    padding: var(--space-section-sm);
     overflow-wrap: break-word;
-    background: var(--layout-card-bg);
   }
 
   .story-dots {
     position: fixed;
     top: 50%;
-    right: clamp(0.5rem, 2vw, 1.25rem);
+    right: var(--space-4);
     z-index: 6;
     display: grid;
-    gap: 0.5rem;
-    max-height: calc(100vh - 2rem);
+    gap: var(--space-2);
+    max-height: calc(100vh - var(--space-8));
     overflow-y: auto;
     transform: translateY(-50%);
     scrollbar-width: thin;
@@ -113,28 +119,13 @@
     cursor: pointer;
     display: grid;
     place-items: center;
-    width: 2.25rem;
-    height: 2.25rem;
+    width: calc(var(--space-8) + var(--space-1));
+    height: calc(var(--space-8) + var(--space-1));
     border: 1px solid color-mix(in srgb, var(--md-border) 82%, var(--md-accent) 18%);
-    border-radius: 999px;
-    color: var(--md-fg-secondary);
-    background: color-mix(in srgb, var(--md-bg-secondary) 92%, transparent);
-    box-shadow: 0 0.5rem 1.5rem rgba(0, 0, 0, 0.16);
-    font: 750 0.72rem/1 var(--md-font-body);
+    border-radius: var(--radius-full);
+    box-shadow: var(--shadow-sm);
+    font: 700 var(--text-xs) / 1 var(--md-font-body);
     letter-spacing: 0;
-    transition:
-      border-color 0.18s ease,
-      background-color 0.18s ease,
-      color 0.18s ease,
-      transform 0.18s ease;
-  }
-
-  .story-dots button:hover,
-  .story-dots button:focus-visible {
-    color: var(--md-fg-primary);
-    border-color: var(--md-accent);
-    background: color-mix(in srgb, var(--md-accent) 16%, var(--md-bg-secondary) 84%);
-    transform: translateX(-3px);
   }
 
   :global(.story-section__content > :first-child) {
@@ -147,27 +138,27 @@
 
   :global(.story-section__content h1),
   :global(.story-section__content h2) {
-    margin-bottom: 1rem;
+    margin-bottom: var(--space-4);
     color: var(--md-fg-primary);
-    font-size: clamp(2.4rem, 7vw, 5rem);
+    font-size: var(--text-hero);
     line-height: 0.98;
     letter-spacing: 0;
     overflow-wrap: anywhere;
   }
 
   :global(.story-section__content p) {
-    font-size: clamp(1rem, 1.6vw, 1.22rem);
-    line-height: 1.7;
+    font-size: var(--text-lg);
+    line-height: 1.6;
   }
 
   :global(.story-section__content blockquote) {
-    margin: 1.5rem 0;
-    padding: 1.15rem 1.3rem;
+    margin: var(--space-6) 0;
+    padding: var(--space-4) var(--space-6);
     border-left: 4px solid var(--md-accent);
-    border-radius: var(--layout-card-radius);
+    border-radius: var(--radius-md);
     color: var(--md-fg-primary);
     background: color-mix(in srgb, var(--md-accent) 10%, var(--md-bg-tertiary) 90%);
-    font-size: 1.08em;
+    font-size: var(--text-base);
   }
 
   :global(.story-section__content img) {
@@ -175,8 +166,8 @@
     width: 100%;
     max-height: 34rem;
     object-fit: cover;
-    border-radius: var(--layout-card-radius);
-    box-shadow: var(--md-shadow);
+    border-radius: var(--radius-md);
+    box-shadow: var(--shadow-sm);
   }
 
   :global(.story-section__content hr) {
@@ -185,41 +176,41 @@
 
   @media (max-width: 760px) {
     .story-layout {
-      padding: 1rem;
+      padding: var(--space-section-lg) var(--space-4) var(--space-section-sm);
     }
 
     .story-sections {
-      gap: 1rem;
+      gap: var(--space-4);
       scroll-snap-type: none;
     }
 
     .story-section {
       grid-template-columns: 1fr;
       align-items: start;
-      gap: 0.75rem;
+      gap: var(--space-3);
       min-height: auto;
       scroll-snap-align: none;
     }
 
     .story-section__number {
       justify-self: start;
-      font-size: 2rem;
+      font-size: var(--text-2xl);
       writing-mode: horizontal-tb;
     }
 
     .story-section__content {
-      padding: 1rem;
+      padding: var(--space-4);
     }
 
     .story-dots {
       position: sticky;
-      top: 4rem;
+      top: calc(3.25rem + var(--space-3));
       grid-auto-flow: column;
-      grid-auto-columns: minmax(2rem, max-content);
+      grid-auto-columns: minmax(var(--space-8), max-content);
       justify-content: start;
       overflow-x: auto;
       overflow-y: hidden;
-      padding: 0.25rem 0 0.75rem;
+      padding: var(--space-1) 0 var(--space-3);
       transform: none;
       scrollbar-width: none;
     }
@@ -229,19 +220,8 @@
     }
 
     .story-dots button {
-      width: 2rem;
-      height: 2rem;
-      background: var(--md-bg-secondary);
-    }
-
-    .story-dots button:hover,
-    .story-dots button:focus-visible {
-      transform: translateY(-2px);
-    }
-
-    :global(.story-section__content h1),
-    :global(.story-section__content h2) {
-      font-size: 2.25rem;
+      width: var(--space-8);
+      height: var(--space-8);
     }
   }
 </style>
