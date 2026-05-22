@@ -10,6 +10,10 @@
   function toggleSection(sectionKey: string) {
     expanded[sectionKey] = !expanded[sectionKey];
   }
+
+  function dashboardBodyId(sectionKey: string) {
+    return `dashboard-body-${sectionKey.replace(/[^A-Za-z0-9_-]/g, '-')}`;
+  }
 </script>
 
 <div class="dashboard-layout rich-layout" data-layout="dashboard" data-toc-visible={showTOC}>
@@ -54,6 +58,7 @@
           class="dashboard-card__header"
           type="button"
           aria-expanded={expanded[section.key] ? 'true' : 'false'}
+          aria-controls={dashboardBodyId(section.key)}
           onclick={() => toggleSection(section.key)}
         >
           <span class="dashboard-card__title">{section.title}</span>
@@ -61,7 +66,12 @@
             {section.blockTypes.join(' / ') || 'text'}
           </span>
         </button>
-        <div class="dashboard-card__body markdown-body">
+        <div
+          id={dashboardBodyId(section.key)}
+          class="dashboard-card__body markdown-body"
+          aria-hidden={!expanded[section.key]}
+          inert={expanded[section.key] ? undefined : true}
+        >
           {@html section.html}
         </div>
       </article>

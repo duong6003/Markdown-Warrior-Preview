@@ -36,9 +36,13 @@ describe('DashboardLayout rich shell', () => {
     expect(source).not.toMatch(/\s+id=\{section\.id\}/);
     expect(source).toContain('data-source-line={section.sourceLine}');
     expect(source).toContain('aria-expanded={expanded[section.key] ?');
+    expect(source).toContain('aria-controls={dashboardBodyId(section.key)}');
     expect(source).toContain('onclick={() => toggleSection(section.key)}');
     expect(source).toContain('{section.blockTypes.join');
     expect(source).toContain('class="dashboard-card__body markdown-body"');
+    expect(source).toContain('id={dashboardBodyId(section.key)}');
+    expect(source).toContain('aria-hidden={!expanded[section.key]}');
+    expect(source).toContain('inert={expanded[section.key] ? undefined : true}');
     expect(source).toContain('{@html section.html}');
   });
 
