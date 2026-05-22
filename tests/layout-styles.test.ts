@@ -46,6 +46,26 @@ describe('shared layout stylesheet', () => {
     expect(source).not.toContain('--layout-wide-max');
   });
 
+  it('defines shared balanced-card sizing, preview, expanded, and mobile behavior', () => {
+    expect(source).toContain('--balanced-card-min-width: 18rem;');
+    expect(source).toContain('--balanced-card-min-height: clamp(18rem, 34vh, 24rem);');
+    expect(source).toContain('--balanced-card-preview-height: clamp(13rem, 28vh, 19rem);');
+    expect(source).toContain('--balanced-card-max-height: min(72vh, 48rem);');
+    expect(source).toContain('--balanced-card-body-gap: var(--space-4);');
+    expect(source).toContain('.balanced-card {');
+    expect(source).toContain('min-height: var(--balanced-card-min-height);');
+    expect(source).toContain('.balanced-card__body {');
+    expect(source).toContain('max-height: var(--balanced-card-preview-height);');
+    expect(source).toContain('overflow: auto;');
+    expect(source).toContain('.balanced-card--expanded .balanced-card__body');
+    expect(source).toContain('max-height: var(--balanced-card-max-height);');
+    expect(source).toContain('.balanced-card__body::after');
+    expect(source).toContain('.balanced-card--expanded .balanced-card__body::after');
+    expect(source).toContain('.balanced-card__toggle');
+    expect(source).toContain('--balanced-card-min-height: 0;');
+    expect(source).toContain('--balanced-card-preview-height: min(62vh, 28rem);');
+  });
+
   it('centralizes toolbar and layout navigation interaction states', () => {
     expect(source).toContain('.docs-sidebar button:hover,');
     expect(source).toContain('.magazine-rail button:hover,');
