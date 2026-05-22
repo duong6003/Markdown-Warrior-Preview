@@ -1,5 +1,15 @@
 # Changelog
 
+## [0.5.0] - 2026-05-22
+
+### Added
+- Content-aware clipping for Dashboard, Magazine, and Story section cards.
+- `clipDetect` webview action that measures rendered content and reacts to viewport resizing.
+
+### Changed
+- Docs layout now renders sections at natural height for full scroll reading.
+- Balanced-card clipping now applies only when rendered content exceeds the viewport-relative threshold.
+
 ## [0.2.0] - 2026-05-22
 
 ### Added
