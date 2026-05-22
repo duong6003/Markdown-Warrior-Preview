@@ -12,7 +12,7 @@ describe('MagazineLayout rich shell', () => {
 
     expect(source).toContain('data-layout="magazine"');
     expect(source).toContain('class="magazine-layout rich-layout"');
-    expect(source).toContain('class="magazine-hero layout-card"');
+    expect(source).toContain('class="magazine-hero lc-card--hero"');
     expect(source).toContain('Markdown Warrior');
     expect(source).toContain('{model.title}');
     expect(source).toContain('model.description');
@@ -20,12 +20,13 @@ describe('MagazineLayout rich shell', () => {
     expect(source).not.toContain('<main class="magazine-content">');
     expect(source).toContain('{#each model.sections as section (section.key)}');
     expect(source).not.toContain('{#each model.sections as section (section.id)}');
-    expect(source).toContain('class="magazine-section layout-card markdown-body"');
+    expect(source).toContain('class="magazine-section lc-card markdown-body"');
     expect(source).toContain('data-section-key={section.key}');
     expect(source).toContain('data-section-id={section.id}');
     expect(source).not.toMatch(/\s+id=\{section\.id\}/);
     expect(source).toContain('data-source-line={section.sourceLine}');
     expect(source).toContain('{@html section.html}');
+    expect(source).not.toContain('layout-card');
   });
 
   it('shows a conditional section rail and scrolls sections smoothly', () => {
@@ -39,9 +40,23 @@ describe('MagazineLayout rich shell', () => {
     );
     expect(source).toContain("scrollIntoView({ behavior: 'smooth', block: 'start' })");
     expect(source).toContain('{#if showTOC && model.sections.length > 1}');
-    expect(source).toContain('class="magazine-rail"');
+    expect(source).toContain('class="magazine-rail lc-card--flat"');
     expect(source).toContain('Sections');
     expect(source).toContain('onclick={() => scrollToSection(section.key, section.id)}');
     expect(source).toContain('{section.title}');
+  });
+
+  it('uses tokenized magazine hero, rail, and section proportions', () => {
+    expect(source).toContain('gap: var(--space-section-md);');
+    expect(source).toContain('padding: var(--space-section-xl);');
+    expect(source).toContain('font: 800 var(--text-hero) / 0.98 var(--md-font-heading, var(--md-font-body));');
+    expect(source).toContain('font-size: var(--text-lg);');
+    expect(source).toContain('grid-template-columns: minmax(0, 1fr) clamp(14rem, 24%, 18rem);');
+    expect(source).toContain('font: 700 var(--text-xs) / 1.4 var(--md-font-body);');
+    expect(source).toContain('font-size: var(--text-2xl);');
+    expect(source).toContain('border-radius: var(--radius-md);');
+    expect(source).not.toContain('--layout-');
+    expect(source).not.toContain('font: 800 5rem/0.95');
+    expect(source).not.toContain('translateX(3px)');
   });
 });

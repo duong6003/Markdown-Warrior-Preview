@@ -15,7 +15,7 @@
 </script>
 
 <div class="magazine-layout rich-layout" data-layout="magazine">
-  <header class="magazine-hero layout-card" data-reveal>
+  <header class="magazine-hero lc-card--hero" data-reveal>
     <p class="magazine-kicker">Markdown Warrior</p>
     <h1>{model.title}</h1>
     {#if model.description}
@@ -27,7 +27,7 @@
     <article class="magazine-content">
       {#each model.sections as section (section.key)}
         <section
-          class="magazine-section layout-card markdown-body"
+          class="magazine-section lc-card markdown-body"
           data-section-key={section.key}
           data-section-id={section.id}
           data-reveal
@@ -39,7 +39,7 @@
     </article>
 
     {#if showTOC && model.sections.length > 1}
-      <aside class="magazine-rail" data-reveal>
+      <aside class="magazine-rail lc-card--flat" data-reveal>
         <h2>Sections</h2>
         <nav aria-label="Magazine sections">
           {#each model.sections as section (section.key)}
@@ -56,22 +56,17 @@
 <style>
   .magazine-layout {
     display: grid;
-    gap: clamp(1.25rem, 3vw, 2.25rem);
+    gap: var(--space-section-md);
   }
 
   .magazine-hero {
-    position: relative;
-    overflow: hidden;
-    padding: clamp(2rem, 6vw, 4.75rem);
-    background:
-      linear-gradient(135deg, color-mix(in srgb, var(--md-accent) 18%, transparent), transparent 42%),
-      color-mix(in srgb, var(--md-bg-secondary) 88%, var(--md-bg-primary) 12%);
+    padding: var(--space-section-xl);
   }
 
   .magazine-hero::after {
     content: '';
     position: absolute;
-    inset: auto clamp(2rem, 5vw, 4rem) clamp(1.5rem, 4vw, 3rem) auto;
+    inset: auto var(--space-section-lg) var(--space-section-sm) auto;
     width: clamp(5rem, 18vw, 13rem);
     height: 2px;
     background: var(--md-accent);
@@ -79,10 +74,10 @@
   }
 
   .magazine-kicker {
-    margin: 0 0 0.8rem;
+    margin: 0 0 var(--space-3);
     color: var(--md-accent);
-    font: 700 0.78rem/1 var(--md-font-body);
-    letter-spacing: 0;
+    font: 700 var(--text-xs) / 1.4 var(--md-font-body);
+    letter-spacing: 0.08em;
     text-transform: uppercase;
   }
 
@@ -90,81 +85,68 @@
     max-width: 13ch;
     margin: 0;
     color: var(--md-fg-primary);
-    font: 800 5rem/0.95 var(--md-font-heading, var(--md-font-body));
+    font: 800 var(--text-hero) / 0.98 var(--md-font-heading, var(--md-font-body));
     letter-spacing: 0;
     overflow-wrap: anywhere;
   }
 
   .magazine-description {
-    max-width: 62ch;
-    margin: clamp(1rem, 2vw, 1.5rem) 0 0;
+    max-width: 60ch;
+    margin: var(--space-6) 0 0;
     color: var(--md-fg-secondary);
-    font-size: 1.15rem;
-    line-height: 1.65;
+    font-size: var(--text-lg);
+    line-height: 1.4;
   }
 
   .magazine-grid {
     display: grid;
-    grid-template-columns: minmax(0, 1fr) minmax(12rem, 16rem);
+    grid-template-columns: minmax(0, 1fr) clamp(14rem, 24%, 18rem);
     align-items: start;
-    gap: var(--layout-gap);
+    gap: var(--space-section-md);
   }
 
   .magazine-content {
     display: grid;
-    gap: var(--layout-gap);
+    gap: var(--space-section-md);
     min-width: 0;
   }
 
   .magazine-section {
     min-width: 0;
-    padding: clamp(1.25rem, 3vw, 2.25rem);
+    padding: var(--space-section-sm);
     overflow-wrap: break-word;
   }
 
   .magazine-rail {
     position: sticky;
-    top: 4.25rem;
+    top: calc(3.25rem + var(--space-4));
     display: grid;
-    gap: 0.75rem;
-    padding: 1rem;
-    border-left: 2px solid color-mix(in srgb, var(--md-accent) 40%, var(--md-border) 60%);
+    gap: var(--space-3);
+    padding: var(--space-4);
   }
 
   .magazine-rail h2 {
     margin: 0;
     color: var(--md-fg-primary);
-    font: 700 0.78rem/1 var(--md-font-body);
-    letter-spacing: 0;
+    font: 700 var(--text-xs) / 1.4 var(--md-font-body);
+    letter-spacing: 0.08em;
     text-transform: uppercase;
   }
 
   .magazine-rail nav {
     display: grid;
-    gap: 0.35rem;
+    gap: var(--space-1);
   }
 
   .magazine-rail button {
     all: unset;
     box-sizing: border-box;
     cursor: pointer;
-    min-height: 2.25rem;
-    padding: 0.55rem 0.65rem;
-    border-radius: var(--layout-card-radius);
-    color: var(--md-fg-secondary);
-    font: 600 0.86rem/1.25 var(--md-font-body);
+    min-height: var(--space-8);
+    padding: var(--space-2) var(--space-3);
+    border-radius: var(--radius-sm);
+    font: 600 var(--text-sm) / 1.4 var(--md-font-body);
     overflow-wrap: anywhere;
-    transition:
-      background-color 0.18s ease,
-      color 0.18s ease,
-      transform 0.18s ease;
-  }
-
-  .magazine-rail button:hover,
-  .magazine-rail button:focus-visible {
-    color: var(--md-fg-primary);
-    background: color-mix(in srgb, var(--md-accent) 14%, transparent);
-    transform: translateX(3px);
   }
 
   :global(.magazine-section > :first-child) {
@@ -178,19 +160,19 @@
   :global(.magazine-section h2:first-child),
   :global(.magazine-section h3:first-child) {
     color: var(--md-fg-primary);
-    font-size: 2.25rem;
-    line-height: 1.05;
+    font-size: var(--text-2xl);
+    line-height: 1.2;
     letter-spacing: 0;
   }
 
   :global(.magazine-section blockquote) {
-    margin: 1.75rem 0;
-    padding: 1.25rem 1.35rem;
+    margin: var(--space-6) 0;
+    padding: var(--space-4) var(--space-6);
     border-left: 4px solid var(--md-accent);
-    border-radius: var(--layout-card-radius);
+    border-radius: var(--radius-md);
     color: var(--md-fg-primary);
     background: color-mix(in srgb, var(--md-accent) 10%, var(--md-bg-tertiary) 90%);
-    font-size: 1.08em;
+    font-size: var(--text-base);
   }
 
   :global(.magazine-section img) {
@@ -198,20 +180,20 @@
     width: 100%;
     max-height: 34rem;
     object-fit: cover;
-    border-radius: var(--layout-card-radius);
-    box-shadow: var(--md-shadow);
+    border-radius: var(--radius-md);
+    box-shadow: var(--shadow-sm);
   }
 
   :global(.magazine-section figure),
   :global(.magazine-section table),
   :global(.magazine-section pre) {
-    margin: 1.5rem 0;
+    margin: var(--space-6) 0;
   }
 
   :global(.magazine-section table) {
     width: 100%;
     overflow: hidden;
-    border-radius: var(--layout-card-radius);
+    border-radius: var(--radius-md);
   }
 
   @media (max-width: 900px) {
@@ -222,16 +204,13 @@
     .magazine-rail {
       position: static;
       order: -1;
-      border-left: 0;
-      border-top: 2px solid color-mix(in srgb, var(--md-accent) 40%, var(--md-border) 60%);
-      padding-inline: 0;
     }
 
     .magazine-rail nav {
       display: flex;
-      gap: 0.5rem;
+      gap: var(--space-2);
       overflow-x: auto;
-      padding-bottom: 0.25rem;
+      padding-bottom: var(--space-1);
       scrollbar-width: none;
     }
 
@@ -242,27 +221,17 @@
     .magazine-rail button {
       flex: 0 0 auto;
       border: 1px solid var(--md-border);
-      background: var(--md-bg-secondary);
     }
   }
 
   @media (max-width: 560px) {
     .magazine-hero,
     .magazine-section {
-      padding: 1.1rem;
-    }
-
-    .magazine-hero h1 {
-      font-size: 3rem;
+      padding: var(--space-4);
     }
 
     .magazine-hero::after {
       display: none;
-    }
-
-    :global(.magazine-section h2:first-child),
-    :global(.magazine-section h3:first-child) {
-      font-size: 1.65rem;
     }
   }
 </style>
