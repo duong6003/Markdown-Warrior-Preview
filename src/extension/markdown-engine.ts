@@ -4,6 +4,16 @@ import { createHighlighter, type Highlighter } from 'shiki';
 import katex from 'katex';
 import matter from 'gray-matter';
 
+export const DEFAULT_SHIKI_THEME = 'catppuccin-mocha';
+
+const SHIKI_THEMES = [
+  'catppuccin-mocha', 'catppuccin-latte',
+  'github-dark', 'github-light',
+  'dracula', 'tokyo-night', 'nord',
+  'min-dark', 'min-light',
+  'vesper', 'solarized-light',
+] as const;
+
 export interface RenderResult {
   html: string;
   sourceMap: SourceMapEntry[];
@@ -13,6 +23,7 @@ export interface RenderResult {
 export class MarkdownEngine {
   private md: MarkdownIt;
   private highlighter: Highlighter | null = null;
+  private currentShikiTheme = DEFAULT_SHIKI_THEME;
 
   constructor() {
     this.md = new MarkdownIt({
@@ -32,7 +43,7 @@ export class MarkdownEngine {
             if (loaded.includes(lang as any)) {
               return this.highlighter.codeToHtml(str, {
                 lang,
-                theme: 'css-variables',
+                theme: this.currentShikiTheme,
               });
             }
             // Queue language for lazy loading (will be available on next render)
@@ -53,7 +64,7 @@ export class MarkdownEngine {
 
   public async initialize() {
     this.highlighter = await createHighlighter({
-      themes: ['css-variables'],
+      themes: [...SHIKI_THEMES],
       langs: [
         'javascript', 'typescript', 'python', 'json',
         'html', 'css', 'bash', 'markdown',
@@ -77,7 +88,9 @@ export class MarkdownEngine {
     }
   }
 
-  public render(content: string): RenderResult {
+  public render(content: string, shikiTheme = DEFAULT_SHIKI_THEME): RenderResult {
+    this.currentShikiTheme = shikiTheme;
+
     // Parse frontmatter
     let body = content;
     let frontmatter: Record<string, unknown> | null = null;

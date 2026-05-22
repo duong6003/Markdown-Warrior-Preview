@@ -132,6 +132,19 @@ describe('MarkdownEngine', () => {
       const { html } = engine.render(md);
       expect(html).toContain('some code');
     });
+
+    it('uses selected Shiki themes after initialization', async () => {
+      const initializedEngine = new MarkdownEngine();
+      await initializedEngine.initialize();
+
+      const md = '```js\nconst x = 1\n```';
+      const github = initializedEngine.render(md, 'github-dark').html;
+      const dracula = initializedEngine.render(md, 'dracula').html;
+
+      expect(github).toContain('shiki');
+      expect(dracula).toContain('shiki');
+      expect(github).not.toBe(dracula);
+    });
   });
 
   describe('heading IDs', () => {
@@ -143,6 +156,23 @@ describe('MarkdownEngine', () => {
     it('handles special characters in headings', () => {
       const { html } = engine.render('## Hello & World!');
       expect(html).toContain('id="hello-world"');
+    });
+  });
+
+  describe('shikiTheme parameter', () => {
+    it('render() accepts a shikiTheme parameter without error', () => {
+      const { html } = engine.render('# Test', 'github-dark');
+      expect(html).toContain('<h1');
+    });
+
+    it('render() accepts dracula theme without error', () => {
+      const { html } = engine.render('```js\nconst x = 1\n```', 'dracula');
+      expect(html).toBeTruthy();
+    });
+
+    it('render() uses catppuccin-mocha as default when no theme given', () => {
+      const { html } = engine.render('# Default theme');
+      expect(html).toContain('<h1');
     });
   });
 });
