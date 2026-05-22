@@ -1,14 +1,8 @@
 <script lang="ts">
-  import { balancedCardBodyId, balancedCardToggleLabel } from '../lib/balanced-card';
   import type { DocumentModel } from '../types/layout';
 
   let { model, showTOC = true }: { model: DocumentModel; showTOC?: boolean } = $props();
   let hasSidebar = $derived(showTOC && model.sections.length > 1);
-  let expanded = $state<Record<string, boolean>>({});
-
-  function toggleSection(sectionKey: string) {
-    expanded[sectionKey] = !expanded[sectionKey];
-  }
 
   function scrollToSection(sectionKey: string, sectionId: string) {
     const escapedKey =
@@ -52,28 +46,15 @@
     <div class="docs-sections">
       {#each model.sections as section (section.key)}
         <section
-          class="docs-section lc-card balanced-card balanced-card--preview"
-          class:balanced-card--expanded={expanded[section.key]}
+          class="docs-section lc-card"
           data-section-key={section.key}
           data-section-id={section.id}
           data-reveal
           data-source-line={section.sourceLine}
         >
-          <div
-            id={balancedCardBodyId('docs', section.key)}
-            class="docs-section__body balanced-card__body markdown-body"
-          >
+          <div class="docs-section__body markdown-body">
             {@html section.html}
           </div>
-          <button
-            class="balanced-card__toggle"
-            type="button"
-            aria-expanded={expanded[section.key] ? 'true' : 'false'}
-            aria-controls={balancedCardBodyId('docs', section.key)}
-            onclick={() => toggleSection(section.key)}
-          >
-            {balancedCardToggleLabel(Boolean(expanded[section.key]))}
-          </button>
         </section>
       {/each}
     </div>

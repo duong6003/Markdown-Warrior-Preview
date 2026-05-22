@@ -11,7 +11,9 @@ describe('MagazineLayout rich shell', () => {
     });
 
     expect(source).toContain("import { balancedCardBodyId, balancedCardToggleLabel } from '../lib/balanced-card';");
+    expect(source).toContain("import { clipDetect } from '../lib/clip-detect';");
     expect(source).toContain('let expanded = $state<Record<string, boolean>>({});');
+    expect(source).toContain('let needsClip = $state<Record<string, boolean>>({});');
     expect(source).toContain('function toggleSection(sectionKey: string)');
     expect(source).toContain('data-layout="magazine"');
     expect(source).toContain('class="magazine-layout rich-layout"');
@@ -23,12 +25,19 @@ describe('MagazineLayout rich shell', () => {
     expect(source).not.toContain('<main class="magazine-content">');
     expect(source).toContain('{#each model.sections as section (section.key)}');
     expect(source).not.toContain('{#each model.sections as section (section.id)}');
-    expect(source).toContain('class="magazine-section lc-card balanced-card balanced-card--preview"');
+    expect(source).toContain('class="magazine-section lc-card balanced-card"');
+    expect(source).not.toContain('balanced-card--preview');
+    expect(source).toContain('class:balanced-card--clippable={needsClip[section.key]}');
     expect(source).toContain('class:balanced-card--expanded={expanded[section.key]}');
     expect(source).toContain("balancedCardBodyId('magazine', section.key)");
     expect(source).toContain('class="magazine-section__body balanced-card__body markdown-body"');
+    expect(source).toContain('use:clipDetect=');
+    expect(source).toContain('needsClip[section.key] = needs');
+    expect(source).toContain('{#if needsClip[section.key]}');
     expect(source).toContain('class="balanced-card__toggle"');
     expect(source).toContain('aria-expanded={expanded[section.key] ?');
+    expect(source).toContain('aria-controls={balancedCardBodyId(');
+    expect(source).toContain('onclick={() => toggleSection(section.key)}');
     expect(source).toContain('balancedCardToggleLabel(Boolean(expanded[section.key]))');
     expect(source).not.toContain('class="magazine-section lc-card markdown-body"');
     expect(source).toContain('data-section-key={section.key}');
