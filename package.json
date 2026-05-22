@@ -1,8 +1,8 @@
 {
-  "name": "markdown-warrior-preview",
+  "name": "markdown-warrior-view",
   "displayName": "Markdown Warrior Preview",
   "description": "A modern, beautiful markdown preview with presentation mode for VS Code",
-  "version": "0.6.0",
+  "version": "0.1.0",
   "publisher": "Dng",
   "repository": {
     "type": "git",
