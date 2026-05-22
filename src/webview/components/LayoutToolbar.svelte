@@ -20,14 +20,18 @@
     override = 'auto',
     detectedLayout,
     currentLayout,
+    themePanelVisible = false,
     onOverrideChange,
     onTogglePresentation,
+    onToggleThemePanel = () => {},
   }: {
     override?: LayoutOverride;
     detectedLayout: LayoutType;
     currentLayout: LayoutType;
+    themePanelVisible?: boolean;
     onOverrideChange: (override: LayoutOverride) => void;
     onTogglePresentation: () => void;
+    onToggleThemePanel?: () => void;
   } = $props();
 </script>
 
@@ -54,6 +58,17 @@
   <div class="layout-toolbar__status" aria-label="Current layout">
     {labels[currentLayout]}
   </div>
+
+  <button
+    class="layout-toolbar__theme-toggle"
+    class:active={themePanelVisible}
+    type="button"
+    aria-pressed={themePanelVisible}
+    title="Theme panel"
+    onclick={onToggleThemePanel}
+  >
+    Themes
+  </button>
 
   <button class="layout-toolbar__slides" type="button" onclick={onTogglePresentation} title="Presentation mode">
     ▶ Slides
