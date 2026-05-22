@@ -180,3 +180,23 @@
   --theme-font-mono: 'Cascadia Code', 'JetBrains Mono', monospace;
   --theme-radius: 6px;
 }
+
+:root,
+:root[data-theme] {
+  --md-bg-primary: var(--theme-bg);
+  --md-bg-secondary: var(--theme-surface);
+  --md-bg-tertiary: var(--theme-surface);
+  --md-fg-primary: var(--theme-text);
+  --md-fg-secondary: var(--theme-text-muted);
+  --md-fg-muted: var(--theme-text-muted);
+  --md-accent: var(--theme-accent);
+  --md-accent-hover: var(--theme-heading);
+  --md-border: var(--theme-border);
+  --md-code-bg: var(--theme-surface);
+  --md-selection: color-mix(in srgb, var(--theme-accent) 30%, transparent);
+  --md-font-body: var(--theme-font-body);
+  --md-font-mono: var(--theme-font-mono);
+  --md-radius: var(--theme-radius);
+  --md-shadow: 0 1px 3px var(--theme-shadow);
+  --md-shadow-lg: 0 4px 12px var(--theme-shadow);
+}

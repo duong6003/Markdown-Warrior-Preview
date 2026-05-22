@@ -3,3 +3,6 @@ dist/
 *.vsix
 .vscode-test/
 .worktrees/
+.superpowers/
+*.out
+vite.config.js

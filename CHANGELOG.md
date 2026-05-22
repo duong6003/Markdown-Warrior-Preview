@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.6.0] - 2026-05-22
+
+### Added
+- 12 built-in full theme packs (color scheme + syntax highlighting + font + spacing).
+- Theme side panel — toggle with 🎨 in the toolbar, grouped into Dark and Light sections.
+- Per-theme Shiki syntax highlighting (Catppuccin, GitHub, Dracula, Tokyo Night, Nord, High Contrast, Vesper, Pitch Black, Sepia, Solarized Light).
+- Theme persists globally across all files and VS Code sessions via `globalState`.
+
 ## [0.5.0] - 2026-05-22
 
 ### Added

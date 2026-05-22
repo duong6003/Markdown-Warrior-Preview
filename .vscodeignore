@@ -4,11 +4,13 @@ src/**
 docs/**
 .kiro/**
 .claude/**
+.superpowers/**
 .omx/**
 tests/**
 *.ts
 !dist/**
 vite.config.ts
+vite.config.js
 tsconfig*.json
 .gitignore
 *.out
