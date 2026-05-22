@@ -1,10 +1,12 @@
 <script lang="ts">
   import { balancedCardBodyId, balancedCardToggleLabel } from '../lib/balanced-card';
+  import { clipDetect } from '../lib/clip-detect';
   import type { DocumentModel } from '../types/layout';
 
   let { model, showTOC }: { model: DocumentModel; showTOC: boolean } = $props();
   let hasDots = $derived(showTOC && model.sections.length > 1);
   let expanded = $state<Record<string, boolean>>({});
+  let needsClip = $state<Record<string, boolean>>({});
 
   function formatSectionNumber(index: number) {
     return String(index + 1).padStart(2, '0');
@@ -54,24 +56,28 @@
           {formatSectionNumber(index)}
         </div>
         <div
-          class="story-section__content lc-card balanced-card balanced-card--preview"
+          class="story-section__content lc-card balanced-card"
+          class:balanced-card--clippable={needsClip[section.key]}
           class:balanced-card--expanded={expanded[section.key]}
         >
           <div
             id={balancedCardBodyId('story', section.key)}
             class="story-section__body balanced-card__body markdown-body"
+            use:clipDetect={(needs: boolean) => { needsClip[section.key] = needs; }}
           >
             {@html section.html}
           </div>
-          <button
-            class="balanced-card__toggle"
-            type="button"
-            aria-expanded={expanded[section.key] ? 'true' : 'false'}
-            aria-controls={balancedCardBodyId('story', section.key)}
-            onclick={() => toggleSection(section.key)}
-          >
-            {balancedCardToggleLabel(Boolean(expanded[section.key]))}
-          </button>
+          {#if needsClip[section.key]}
+            <button
+              class="balanced-card__toggle"
+              type="button"
+              aria-expanded={expanded[section.key] ? 'true' : 'false'}
+              aria-controls={balancedCardBodyId('story', section.key)}
+              onclick={() => toggleSection(section.key)}
+            >
+              {balancedCardToggleLabel(Boolean(expanded[section.key]))}
+            </button>
+          {/if}
         </div>
       </section>
     {/each}

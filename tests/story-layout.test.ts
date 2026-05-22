@@ -12,8 +12,10 @@ describe('StoryLayout rich shell', () => {
 
     expect(source).toContain('let { model, showTOC }');
     expect(source).toContain("import { balancedCardBodyId, balancedCardToggleLabel } from '../lib/balanced-card';");
+    expect(source).toContain("import { clipDetect } from '../lib/clip-detect';");
     expect(source).toContain('let hasDots = $derived(showTOC && model.sections.length > 1)');
     expect(source).toContain('let expanded = $state<Record<string, boolean>>({});');
+    expect(source).toContain('let needsClip = $state<Record<string, boolean>>({});');
     expect(source).toContain('function toggleSection(sectionKey: string)');
     expect(source).toContain('class="story-layout"');
     expect(source).toContain('data-layout="story"');
@@ -31,12 +33,19 @@ describe('StoryLayout rich shell', () => {
     expect(source).toContain('data-source-line={section.sourceLine}');
     expect(source).toContain('class="story-section__number"');
     expect(source).toContain('{formatSectionNumber(index)}');
-    expect(source).toContain('class="story-section__content lc-card balanced-card balanced-card--preview"');
+    expect(source).toContain('class="story-section__content lc-card balanced-card"');
+    expect(source).not.toContain('balanced-card--preview');
+    expect(source).toContain('class:balanced-card--clippable={needsClip[section.key]}');
     expect(source).toContain('class:balanced-card--expanded={expanded[section.key]}');
     expect(source).toContain("balancedCardBodyId('story', section.key)");
     expect(source).toContain('class="story-section__body balanced-card__body markdown-body"');
+    expect(source).toContain('use:clipDetect=');
+    expect(source).toContain('needsClip[section.key] = needs');
+    expect(source).toContain('{#if needsClip[section.key]}');
     expect(source).toContain('class="balanced-card__toggle"');
     expect(source).toContain('aria-expanded={expanded[section.key] ?');
+    expect(source).toContain('aria-controls={balancedCardBodyId(');
+    expect(source).toContain('onclick={() => toggleSection(section.key)}');
     expect(source).toContain('balancedCardToggleLabel(Boolean(expanded[section.key]))');
     expect(source).not.toContain('class="story-section__content markdown-body lc-card"');
     expect(source).toContain('{@html section.html}');
