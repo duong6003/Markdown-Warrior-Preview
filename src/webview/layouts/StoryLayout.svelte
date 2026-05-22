@@ -1,11 +1,17 @@
 <script lang="ts">
+  import { balancedCardBodyId, balancedCardToggleLabel } from '../lib/balanced-card';
   import type { DocumentModel } from '../types/layout';
 
   let { model, showTOC }: { model: DocumentModel; showTOC: boolean } = $props();
   let hasDots = $derived(showTOC && model.sections.length > 1);
+  let expanded = $state<Record<string, boolean>>({});
 
   function formatSectionNumber(index: number) {
     return String(index + 1).padStart(2, '0');
+  }
+
+  function toggleSection(sectionKey: string) {
+    expanded[sectionKey] = !expanded[sectionKey];
   }
 
   function scrollToSection(sectionKey: string, sectionId: string) {
@@ -47,8 +53,25 @@
         <div class="story-section__number" aria-hidden="true">
           {formatSectionNumber(index)}
         </div>
-        <div class="story-section__content markdown-body lc-card">
-          {@html section.html}
+        <div
+          class="story-section__content lc-card balanced-card balanced-card--preview"
+          class:balanced-card--expanded={expanded[section.key]}
+        >
+          <div
+            id={balancedCardBodyId('story', section.key)}
+            class="story-section__body balanced-card__body markdown-body"
+          >
+            {@html section.html}
+          </div>
+          <button
+            class="balanced-card__toggle"
+            type="button"
+            aria-expanded={expanded[section.key] ? 'true' : 'false'}
+            aria-controls={balancedCardBodyId('story', section.key)}
+            onclick={() => toggleSection(section.key)}
+          >
+            {balancedCardToggleLabel(Boolean(expanded[section.key]))}
+          </button>
         </div>
       </section>
     {/each}
@@ -96,6 +119,9 @@
 
   .story-section__content {
     min-width: 0;
+  }
+
+  .story-section__body {
     padding: var(--space-section-sm);
     overflow-wrap: break-word;
   }
@@ -128,16 +154,16 @@
     letter-spacing: 0;
   }
 
-  :global(.story-section__content > :first-child) {
+  :global(.story-section__body > :first-child) {
     margin-top: 0;
   }
 
-  :global(.story-section__content > :last-child) {
+  :global(.story-section__body > :last-child) {
     margin-bottom: 0;
   }
 
-  :global(.story-section__content h1),
-  :global(.story-section__content h2) {
+  :global(.story-section__body h1),
+  :global(.story-section__body h2) {
     margin-bottom: var(--space-4);
     color: var(--md-fg-primary);
     font-size: var(--text-hero);
@@ -146,12 +172,12 @@
     overflow-wrap: anywhere;
   }
 
-  :global(.story-section__content p) {
+  :global(.story-section__body p) {
     font-size: var(--text-lg);
     line-height: 1.6;
   }
 
-  :global(.story-section__content blockquote) {
+  :global(.story-section__body blockquote) {
     margin: var(--space-6) 0;
     padding: var(--space-4) var(--space-6);
     border-left: 4px solid var(--md-accent);
@@ -161,7 +187,7 @@
     font-size: var(--text-base);
   }
 
-  :global(.story-section__content img) {
+  :global(.story-section__body img) {
     display: block;
     width: 100%;
     max-height: 34rem;
@@ -170,7 +196,7 @@
     box-shadow: var(--shadow-sm);
   }
 
-  :global(.story-section__content hr) {
+  :global(.story-section__body hr) {
     display: none;
   }
 
@@ -198,7 +224,7 @@
       writing-mode: horizontal-tb;
     }
 
-    .story-section__content {
+    .story-section__body {
       padding: var(--space-4);
     }
 
