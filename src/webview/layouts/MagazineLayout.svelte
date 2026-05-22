@@ -1,7 +1,13 @@
 <script lang="ts">
+  import { balancedCardBodyId, balancedCardToggleLabel } from '../lib/balanced-card';
   import type { DocumentModel } from '../types/layout';
 
   let { model, showTOC = true }: { model: DocumentModel; showTOC?: boolean } = $props();
+  let expanded = $state<Record<string, boolean>>({});
+
+  function toggleSection(sectionKey: string) {
+    expanded[sectionKey] = !expanded[sectionKey];
+  }
 
   function scrollToSection(sectionKey: string, sectionId: string) {
     const escapedKey =
@@ -27,13 +33,28 @@
     <article class="magazine-content">
       {#each model.sections as section (section.key)}
         <section
-          class="magazine-section lc-card markdown-body"
+          class="magazine-section lc-card balanced-card balanced-card--preview"
+          class:balanced-card--expanded={expanded[section.key]}
           data-section-key={section.key}
           data-section-id={section.id}
           data-reveal
           data-source-line={section.sourceLine}
         >
-          {@html section.html}
+          <div
+            id={balancedCardBodyId('magazine', section.key)}
+            class="magazine-section__body balanced-card__body markdown-body"
+          >
+            {@html section.html}
+          </div>
+          <button
+            class="balanced-card__toggle"
+            type="button"
+            aria-expanded={expanded[section.key] ? 'true' : 'false'}
+            aria-controls={balancedCardBodyId('magazine', section.key)}
+            onclick={() => toggleSection(section.key)}
+          >
+            {balancedCardToggleLabel(Boolean(expanded[section.key]))}
+          </button>
         </section>
       {/each}
     </article>
@@ -113,6 +134,9 @@
 
   .magazine-section {
     min-width: 0;
+  }
+
+  .magazine-section__body {
     padding: var(--space-section-sm);
     overflow-wrap: break-word;
   }
@@ -149,23 +173,23 @@
     overflow-wrap: anywhere;
   }
 
-  :global(.magazine-section > :first-child) {
+  :global(.magazine-section__body > :first-child) {
     margin-top: 0;
   }
 
-  :global(.magazine-section > :last-child) {
+  :global(.magazine-section__body > :last-child) {
     margin-bottom: 0;
   }
 
-  :global(.magazine-section h2:first-child),
-  :global(.magazine-section h3:first-child) {
+  :global(.magazine-section__body h2:first-child),
+  :global(.magazine-section__body h3:first-child) {
     color: var(--md-fg-primary);
     font-size: var(--text-2xl);
     line-height: 1.2;
     letter-spacing: 0;
   }
 
-  :global(.magazine-section blockquote) {
+  :global(.magazine-section__body blockquote) {
     margin: var(--space-6) 0;
     padding: var(--space-4) var(--space-6);
     border-left: 4px solid var(--md-accent);
@@ -175,7 +199,7 @@
     font-size: var(--text-base);
   }
 
-  :global(.magazine-section img) {
+  :global(.magazine-section__body img) {
     display: block;
     width: 100%;
     max-height: 34rem;
@@ -184,15 +208,16 @@
     box-shadow: var(--shadow-sm);
   }
 
-  :global(.magazine-section figure),
-  :global(.magazine-section table),
-  :global(.magazine-section pre) {
+  :global(.magazine-section__body figure),
+  :global(.magazine-section__body table),
+  :global(.magazine-section__body pre) {
     margin: var(--space-6) 0;
   }
 
-  :global(.magazine-section table) {
+  :global(.magazine-section__body table) {
+    display: block;
     width: 100%;
-    overflow: hidden;
+    overflow-x: auto;
     border-radius: var(--radius-md);
   }
 
@@ -226,7 +251,7 @@
 
   @media (max-width: 560px) {
     .magazine-hero,
-    .magazine-section {
+    .magazine-section__body {
       padding: var(--space-4);
     }
 
