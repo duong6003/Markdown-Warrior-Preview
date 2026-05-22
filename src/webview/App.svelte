@@ -3,6 +3,7 @@
   import { onMessage, postMessage } from './lib/message-bridge';
   import { scrollToLine, setupScrollReporter } from './lib/source-map';
   import { renderMermaidBlocks } from './lib/mermaid-renderer';
+  import { setupLayoutReveal } from './lib/layout-reveal';
   import { setupCheckboxHandler } from './lib/checkbox-handler';
   import { setupCollapsibleHeadings, restoreCollapsedState } from './lib/collapsible-headings';
   import { createDocumentModel, resolveLayout } from './lib/layout-engine';
@@ -52,6 +53,7 @@
 
       renderMermaidBlocks();
       restoreCollapsedState();
+      setupLayoutReveal();
 
       const main = document.querySelector('main') as HTMLElement | null;
       if (!main) return;
