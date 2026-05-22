@@ -8,6 +8,12 @@ export function clipDetect(
   };
   const ro = new ResizeObserver(check);
   ro.observe(node);
+  globalThis.addEventListener('resize', check);
   check();
-  return { destroy: () => ro.disconnect() };
+  return {
+    destroy: () => {
+      ro.disconnect();
+      globalThis.removeEventListener('resize', check);
+    },
+  };
 }
