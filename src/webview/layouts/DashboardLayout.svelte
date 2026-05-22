@@ -17,7 +17,7 @@
 </script>
 
 <div class="dashboard-layout rich-layout" data-layout="dashboard" data-toc-visible={showTOC}>
-  <header class="dashboard-header layout-card" data-reveal>
+  <header class="dashboard-header lc-card--hero" data-reveal>
     <span>Dashboard</span>
     <h1>{model.title}</h1>
     {#if model.description}
@@ -26,19 +26,19 @@
   </header>
 
   <section class="dashboard-stats" aria-label="Document stats">
-    <div class="dashboard-stat layout-card" data-reveal>
+    <div class="dashboard-stat lc-card" data-reveal>
       <span>Words</span>
       <strong>{model.stats.wordCount.toLocaleString()}</strong>
     </div>
-    <div class="dashboard-stat layout-card" data-reveal>
+    <div class="dashboard-stat lc-card" data-reveal>
       <span>Sections</span>
       <strong>{model.stats.sectionCount.toLocaleString()}</strong>
     </div>
-    <div class="dashboard-stat layout-card" data-reveal>
+    <div class="dashboard-stat lc-card" data-reveal>
       <span>Code</span>
       <strong>{model.stats.codeBlockCount.toLocaleString()}</strong>
     </div>
-    <div class="dashboard-stat layout-card" data-reveal>
+    <div class="dashboard-stat lc-card" data-reveal>
       <span>Tasks</span>
       <strong>{taskPercent === null ? '-' : `${taskPercent}%`}</strong>
     </div>
@@ -47,7 +47,7 @@
   <section class="dashboard-grid" aria-label="Dashboard sections">
     {#each model.sections as section (section.key)}
       <article
-        class="dashboard-card layout-card"
+        class="dashboard-card lc-card"
         class:expanded={expanded[section.key]}
         data-section-key={section.key}
         data-section-id={section.id}
@@ -79,27 +79,22 @@
 
 <style>
   .dashboard-layout {
-    width: min(100%, var(--layout-wide-max));
     display: grid;
-    gap: var(--layout-gap);
+    gap: var(--space-section-md);
   }
 
   .dashboard-header {
     display: grid;
-    gap: 0.8rem;
-    padding: clamp(1.5rem, 4vw, 3rem);
-    overflow: hidden;
-    background:
-      linear-gradient(135deg, color-mix(in srgb, var(--md-accent) 14%, transparent), transparent 52%),
-      color-mix(in srgb, var(--md-bg-secondary) 90%, var(--md-bg-primary) 10%);
+    gap: var(--space-4);
+    padding: var(--space-section-lg);
   }
 
   .dashboard-header span,
   .dashboard-stat span,
   .dashboard-card__types {
     color: var(--md-accent);
-    font: 800 0.72rem/1 var(--md-font-body);
-    letter-spacing: 0;
+    font: 800 var(--text-xs) / 1.4 var(--md-font-body);
+    letter-spacing: 0.08em;
     text-transform: uppercase;
   }
 
@@ -107,44 +102,44 @@
     max-width: 16ch;
     margin: 0;
     color: var(--md-fg-primary);
-    font: 800 clamp(2.25rem, 6vw, 4.5rem) / 1 var(--md-font-heading, var(--md-font-body));
+    font: 800 var(--text-hero) / 0.98 var(--md-font-heading, var(--md-font-body));
     letter-spacing: 0;
     overflow-wrap: anywhere;
   }
 
   .dashboard-header p {
-    max-width: 70ch;
+    max-width: 60ch;
     margin: 0;
     color: var(--md-fg-secondary);
-    font-size: 1.05rem;
-    line-height: 1.65;
+    font-size: var(--text-lg);
+    line-height: 1.4;
   }
 
   .dashboard-stats {
     display: grid;
-    grid-template-columns: repeat(4, minmax(0, 1fr));
-    gap: 0.85rem;
+    grid-template-columns: repeat(auto-fit, minmax(10rem, 1fr));
+    gap: var(--space-4);
   }
 
   .dashboard-stat {
     display: grid;
-    gap: 0.65rem;
+    gap: var(--space-3);
     min-width: 0;
-    padding: 1rem;
+    padding: var(--space-4);
     overflow: hidden;
   }
 
   .dashboard-stat strong {
     color: var(--md-fg-primary);
-    font: 800 clamp(1.55rem, 3vw, 2.35rem) / 1 var(--md-font-heading, var(--md-font-body));
+    font: 800 var(--text-2xl) / 1 var(--md-font-heading, var(--md-font-body));
     letter-spacing: 0;
     overflow-wrap: anywhere;
   }
 
   .dashboard-grid {
     display: grid;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: var(--layout-gap);
+    grid-template-columns: repeat(auto-fill, minmax(22rem, 1fr));
+    gap: var(--space-section-md);
     align-items: start;
   }
 
@@ -160,10 +155,10 @@
     display: flex;
     align-items: center;
     justify-content: space-between;
-    gap: 1rem;
+    gap: var(--space-4);
     width: 100%;
     min-height: 4rem;
-    padding: 1rem 1.15rem;
+    padding: var(--space-4) var(--space-6);
     border-bottom: 1px solid var(--md-border);
     color: var(--md-fg-primary);
     background: color-mix(in srgb, var(--md-bg-tertiary) 58%, transparent);
@@ -177,7 +172,7 @@
   .dashboard-card__title {
     min-width: 0;
     color: var(--md-fg-primary);
-    font: 750 1rem/1.25 var(--md-font-heading, var(--md-font-body));
+    font: 700 var(--text-base) / 1.3 var(--md-font-heading, var(--md-font-body));
     overflow-wrap: anywhere;
   }
 
@@ -191,8 +186,8 @@
   }
 
   .dashboard-card__body {
-    max-height: 320px;
-    padding: 1rem 1.15rem 1.15rem;
+    max-height: 18rem;
+    padding: var(--space-4) var(--space-6) var(--space-6);
     overflow: auto;
     transition: max-height 0.2s ease;
   }
@@ -219,32 +214,28 @@
   :global(.dashboard-card__body pre) {
     max-width: 100%;
     overflow: auto;
-    border-radius: var(--layout-card-radius);
-  }
-
-  @media (max-width: 900px) {
-    .dashboard-stats {
-      grid-template-columns: repeat(2, minmax(0, 1fr));
-    }
+    border-radius: var(--radius-md);
   }
 
   @media (max-width: 760px) {
-    .dashboard-stats,
     .dashboard-grid {
       grid-template-columns: 1fr;
     }
 
-    .dashboard-header,
+    .dashboard-header {
+      padding: var(--space-section-sm);
+    }
+
     .dashboard-stat,
     .dashboard-card__header,
     .dashboard-card__body {
-      padding: 1rem;
+      padding: var(--space-4);
     }
 
     .dashboard-card__header {
       align-items: flex-start;
       flex-direction: column;
-      gap: 0.5rem;
+      gap: var(--space-2);
     }
 
     .dashboard-card__types {

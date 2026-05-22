@@ -14,7 +14,7 @@ describe('DashboardLayout rich shell', () => {
     expect(source).toContain('let taskPercent = $derived');
     expect(source).toContain('class="dashboard-layout rich-layout"');
     expect(source).toContain('data-layout="dashboard"');
-    expect(source).toContain('class="dashboard-header layout-card"');
+    expect(source).toContain('class="dashboard-header lc-card--hero"');
     expect(source).toContain('<span>Dashboard</span>');
     expect(source).toContain('{model.title}');
     expect(source).toContain('model.description');
@@ -29,7 +29,7 @@ describe('DashboardLayout rich shell', () => {
     expect(source).toContain('aria-label="Dashboard sections"');
     expect(source).toContain('{#each model.sections as section (section.key)}');
     expect(source).not.toContain('{#each model.sections as section (section.id)}');
-    expect(source).toContain('class="dashboard-card layout-card"');
+    expect(source).toContain('class="dashboard-card lc-card"');
     expect(source).toContain('class:expanded={expanded[section.key]}');
     expect(source).toContain('data-section-key={section.key}');
     expect(source).toContain('data-section-id={section.id}');
@@ -44,15 +44,13 @@ describe('DashboardLayout rich shell', () => {
     expect(source).not.toContain('aria-hidden={!expanded[section.key]}');
     expect(source).not.toContain('inert={expanded[section.key] ? undefined : true}');
     expect(source).toContain('{@html section.html}');
+    expect(source).not.toContain('layout-card');
   });
 
-  it('defines responsive dashboard styles and collapsed card bodies', () => {
-    expect(source).toContain('width: min(100%, var(--layout-wide-max));');
-    expect(source).toContain('grid-template-columns: repeat(4, minmax(0, 1fr));');
-    expect(source).toContain('grid-template-columns: repeat(2, minmax(0, 1fr));');
-    expect(source).toContain('overflow: hidden;');
-    expect(source).toContain('display: flex;');
-    expect(source).toContain('max-height: 320px;');
+  it('defines adaptive dashboard grids and semantic collapsed card bodies', () => {
+    expect(source).toContain('grid-template-columns: repeat(auto-fit, minmax(10rem, 1fr));');
+    expect(source).toContain('grid-template-columns: repeat(auto-fill, minmax(22rem, 1fr));');
+    expect(source).toContain('max-height: 18rem;');
     expect(source).toMatch(/\.dashboard-card__body\s*\{[^}]*overflow: auto;/);
     expect(source).toContain('.dashboard-card.expanded .dashboard-card__body');
     expect(source).toContain('max-height: none;');
@@ -60,5 +58,19 @@ describe('DashboardLayout rich shell', () => {
     expect(source).toContain(':global(.dashboard-card__body pre)');
     expect(source).toContain('@media (max-width: 760px)');
     expect(source).toContain('grid-template-columns: 1fr;');
+    expect(source).not.toContain('grid-template-columns: repeat(4, minmax(0, 1fr));');
+    expect(source).not.toContain('grid-template-columns: repeat(2, minmax(0, 1fr));');
+    expect(source).not.toContain('max-height: 320px;');
+  });
+
+  it('uses shared layout tokens for dashboard type, spacing, radius, and hero scale', () => {
+    expect(source).toContain('gap: var(--space-section-md);');
+    expect(source).toContain('gap: var(--space-4);');
+    expect(source).toContain('padding: var(--space-section-lg);');
+    expect(source).toContain('font: 800 var(--text-hero) / 0.98 var(--md-font-heading, var(--md-font-body));');
+    expect(source).toContain('font: 800 var(--text-xs) / 1.4 var(--md-font-body);');
+    expect(source).toContain('font: 800 var(--text-2xl) / 1 var(--md-font-heading, var(--md-font-body));');
+    expect(source).toContain('border-radius: var(--radius-md);');
+    expect(source).not.toContain('--layout-');
   });
 });
