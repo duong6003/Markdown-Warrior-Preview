@@ -87,11 +87,13 @@ These patterns are used identically across all four layouts.
 
 Three variants replace the current single `.layout-card`:
 
-| Class | Use | Style |
-|-------|-----|-------|
-| `.lc-card` | Default card | border + `--radius-md` + `--shadow-sm` + bg-secondary |
-| `.lc-card--hero` | Hero/header block | `--radius-lg` + `--shadow-md` + gradient accent overlay |
-| `.lc-card--flat` | Nav panels, sidebars | border only, no shadow |
+| Class | Use | Applied in |
+|-------|-----|------------|
+| `.lc-card` | Default card — border + `--radius-md` + `--shadow-sm` + bg-secondary | Dashboard stat cards, dashboard section cards, docs section cards, magazine section cards, story content cards |
+| `.lc-card--hero` | Hero/header block — `--radius-lg` + `--shadow-md` + gradient accent overlay | Docs header, Dashboard header, Magazine hero |
+| `.lc-card--flat` | Nav panels — border only, no shadow | Docs sidebar, Magazine rail |
+
+**Class rename:** All Svelte templates currently use `class="layout-card"`. This class is replaced by `lc-card` (or `lc-card--hero` / `lc-card--flat`). Every occurrence of `layout-card` in `.svelte` files must be updated.
 
 **Hover (all cards):** `--shadow-md` + `translateY(-2px)` — uniform, defined once in `layouts.css`.
 
@@ -115,11 +117,17 @@ Applies to Docs sidebar buttons, Magazine rail buttons, Story dots — uniform i
 
 ```
 Resting:  color fg-secondary, background transparent
-Hover:    color fg-primary, background accent/10%, translateX(2px)
+Hover:    color fg-primary, background accent/10%, transform (see below)
 Active:   color fg-primary, background accent/16%, font-weight 600
 ```
 
-Current codebase uses `translateX(3px)` in some places, `translateY(-1px)` in others — normalized to `translateX(2px)` for horizontal navs, `translateY(-2px)` for vertical.
+**Transform direction by nav type:**
+- Docs sidebar buttons → `translateX(2px)` (horizontal slide-in)
+- Magazine rail buttons → `translateX(2px)` (horizontal slide-in)
+- Story dots → `translateY(-2px)` (vertical lift)
+- Toolbar pills → `translateY(-1px)` (subtle lift, no translate-x)
+
+Current codebase is inconsistent: `translateX(3px)` in Docs, `translateX(3px)` in Magazine, `translateX(-3px)` in Story dots — all normalized to the values above.
 
 ### Page Spacing Rhythm
 
