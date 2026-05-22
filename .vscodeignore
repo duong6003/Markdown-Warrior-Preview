@@ -4,6 +4,7 @@ src/**
 docs/**
 .kiro/**
 .claude/**
+.omx/**
 tests/**
 *.ts
 !dist/**
