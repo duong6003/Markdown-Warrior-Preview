@@ -11,8 +11,10 @@ describe('StoryLayout rich shell', () => {
     });
 
     expect(source).toContain('let { model, showTOC }');
+    expect(source).toContain('let hasDots = $derived(showTOC && model.sections.length > 1)');
     expect(source).toContain('class="story-layout"');
     expect(source).toContain('data-layout="story"');
+    expect(source).toContain('{#if hasDots}');
     expect(source).toContain('class="story-dots"');
     expect(source).toContain('aria-label="Story sections"');
     expect(source).toContain('class="story-sections"');
@@ -53,12 +55,15 @@ describe('StoryLayout rich shell', () => {
     expect(source).toContain('scroll-snap-align: start;');
     expect(source).toContain('writing-mode: vertical-rl;');
     expect(source).toContain('position: fixed;');
+    expect(source).toContain('max-height: calc(100vh - 2rem);');
+    expect(source).toContain('overflow-y: auto;');
     expect(source).toContain('background: var(--layout-card-bg);');
     expect(source).toContain(':global(.story-section__content h1)');
     expect(source).toContain(':global(.story-section__content h2)');
     expect(source).toContain(':global(.story-section__content hr)');
     expect(source).toContain('display: none;');
     expect(source).toContain('@media (max-width: 760px)');
+    expect(source).toContain('top: 4rem;');
     expect(source).toContain('grid-template-columns: 1fr;');
   });
 });

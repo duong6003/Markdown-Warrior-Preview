@@ -2,6 +2,7 @@
   import type { DocumentModel } from '../types/layout';
 
   let { model, showTOC }: { model: DocumentModel; showTOC: boolean } = $props();
+  let hasDots = $derived(showTOC && model.sections.length > 1);
 
   function formatSectionNumber(index: number) {
     return String(index + 1).padStart(2, '0');
@@ -19,18 +20,20 @@
 </script>
 
 <div class="story-layout" data-layout="story">
-  <nav class="story-dots" aria-label="Story sections">
-    {#each model.sections as section, index (section.key)}
-      <button
-        type="button"
-        title={section.title}
-        aria-label={`Jump to ${section.title}`}
-        onclick={() => scrollToSection(section.key, section.id)}
-      >
-        {formatSectionNumber(index)}
-      </button>
-    {/each}
-  </nav>
+  {#if hasDots}
+    <nav class="story-dots" aria-label="Story sections">
+      {#each model.sections as section, index (section.key)}
+        <button
+          type="button"
+          title={section.title}
+          aria-label={`Jump to ${section.title}`}
+          onclick={() => scrollToSection(section.key, section.id)}
+        >
+          {formatSectionNumber(index)}
+        </button>
+      {/each}
+    </nav>
+  {/if}
 
   <div class="story-sections" data-toc-visible={showTOC}>
     {#each model.sections as section, index (section.key)}
@@ -98,7 +101,10 @@
     z-index: 6;
     display: grid;
     gap: 0.5rem;
+    max-height: calc(100vh - 2rem);
+    overflow-y: auto;
     transform: translateY(-50%);
+    scrollbar-width: thin;
   }
 
   .story-dots button {
@@ -207,11 +213,12 @@
 
     .story-dots {
       position: sticky;
-      top: 0.75rem;
+      top: 4rem;
       grid-auto-flow: column;
       grid-auto-columns: minmax(2rem, max-content);
       justify-content: start;
       overflow-x: auto;
+      overflow-y: hidden;
       padding: 0.25rem 0 0.75rem;
       transform: none;
       scrollbar-width: none;
