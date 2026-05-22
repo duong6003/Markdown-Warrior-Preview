@@ -4,8 +4,9 @@ import type { HostToWebviewMessage, WebviewToHostMessage } from '../shared/messa
 import { MarkdownEngine } from './markdown-engine';
 import { ScrollSync } from './scroll-sync';
 import { AssetResolver } from './asset-resolver';
+import { DEFAULT_THEME, getTheme } from '../shared/theme-registry';
 
-const DEFAULT_THEME_ID = 'catppuccin-mocha';
+const THEME_GLOBAL_STATE_KEY = 'markdownWarrior.selectedTheme';
 
 export class PreviewProvider {
   private panel: vscode.WebviewPanel | undefined;
@@ -13,10 +14,15 @@ export class PreviewProvider {
   private engine = new MarkdownEngine();
   private scrollSync: ScrollSync | undefined;
   private disposables: vscode.Disposable[] = [];
+  private selectedThemeId = DEFAULT_THEME;
 
-  constructor(private readonly extensionUri: vscode.Uri) {}
+  constructor(
+    private readonly extensionUri: vscode.Uri,
+    private readonly context: vscode.ExtensionContext
+  ) {}
 
   public async initialize() {
+    this.selectedThemeId = await this.readSelectedThemeId();
     await this.engine.initialize();
   }
 
@@ -86,7 +92,9 @@ export class PreviewProvider {
       // Handle messages from webview
       this.panel.webview.onDidReceiveMessage(
         (message: WebviewToHostMessage) => {
-          this.handleWebviewMessage(message);
+          void this.handleWebviewMessage(message).catch((err) => {
+            console.error('[MarkdownWarrior] webview message handling failed:', err);
+          });
         },
         undefined,
         []
@@ -106,7 +114,7 @@ export class PreviewProvider {
     }
   }
 
-  private handleWebviewMessage(message: WebviewToHostMessage) {
+  private async handleWebviewMessage(message: WebviewToHostMessage) {
     switch (message.type) {
       case 'ready':
         if (this.currentEditor) {
@@ -133,13 +141,18 @@ export class PreviewProvider {
       case 'checkboxToggle':
         this.toggleCheckbox(message.line, message.checked);
         break;
+      case 'setTheme':
+        await this.setTheme(message.themeId);
+        break;
     }
   }
 
   private updateContent(editor: vscode.TextEditor) {
     if (!this.panel) return;
     const text = editor.document.getText();
-    const { html, sourceMap, frontmatter } = this.engine.render(text);
+    const selectedThemeId = this.selectedThemeId;
+    const shikiTheme = getTheme(selectedThemeId).shikiTheme;
+    const { html, sourceMap, frontmatter } = this.engine.render(text, shikiTheme);
 
     // Resolve local asset paths to webview URIs
     const resolver = new AssetResolver(this.panel.webview, editor.document.uri);
@@ -150,10 +163,30 @@ export class PreviewProvider {
       html: resolvedHtml,
       sourceMap,
       frontmatter,
-      themeId: DEFAULT_THEME_ID,
+      themeId: selectedThemeId,
     } satisfies HostToWebviewMessage;
 
     this.panel.webview.postMessage(message);
+  }
+
+  private async readSelectedThemeId(): Promise<string> {
+    const themeId = this.context.globalState.get<string>(THEME_GLOBAL_STATE_KEY, DEFAULT_THEME);
+    try {
+      getTheme(themeId);
+      return themeId;
+    } catch {
+      await this.context.globalState.update(THEME_GLOBAL_STATE_KEY, DEFAULT_THEME);
+      return DEFAULT_THEME;
+    }
+  }
+
+  private async setTheme(themeId: string) {
+    getTheme(themeId);
+    this.selectedThemeId = themeId;
+    if (this.currentEditor) {
+      this.updateContent(this.currentEditor);
+    }
+    await this.context.globalState.update(THEME_GLOBAL_STATE_KEY, themeId);
   }
 
   /**

@@ -4,7 +4,7 @@ import { Exporter } from './exporter';
 import { MarkdownEngine } from './markdown-engine';
 
 export async function activate(context: vscode.ExtensionContext) {
-  const previewProvider = new PreviewProvider(context.extensionUri);
+  const previewProvider = new PreviewProvider(context.extensionUri, context);
   try {
     await previewProvider.initialize();
   } catch (err) {
