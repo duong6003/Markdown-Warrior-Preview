@@ -71,6 +71,7 @@
 
 <style>
   .dashboard-layout {
+    width: min(100%, var(--layout-wide-max));
     display: grid;
     gap: var(--layout-gap);
   }

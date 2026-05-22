@@ -43,6 +43,7 @@ describe('DashboardLayout rich shell', () => {
   });
 
   it('defines responsive dashboard styles and collapsed card bodies', () => {
+    expect(source).toContain('width: min(100%, var(--layout-wide-max));');
     expect(source).toContain('grid-template-columns: repeat(4, minmax(0, 1fr));');
     expect(source).toContain('grid-template-columns: repeat(2, minmax(0, 1fr));');
     expect(source).toContain('overflow: hidden;');
