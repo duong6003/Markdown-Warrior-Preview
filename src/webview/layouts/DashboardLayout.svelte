@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { balancedCardBodyId, balancedCardToggleLabel } from '../lib/balanced-card';
   import type { DocumentModel } from '../types/layout';
 
   let { model, showTOC }: { model: DocumentModel; showTOC: boolean } = $props();
@@ -9,10 +10,6 @@
 
   function toggleSection(sectionKey: string) {
     expanded[sectionKey] = !expanded[sectionKey];
-  }
-
-  function dashboardBodyId(sectionKey: string) {
-    return `dashboard-body-${sectionKey.replace(/[^A-Za-z0-9_-]/g, '-')}`;
   }
 </script>
 
@@ -47,31 +44,34 @@
   <section class="dashboard-grid" aria-label="Dashboard sections">
     {#each model.sections as section (section.key)}
       <article
-        class="dashboard-card lc-card"
-        class:expanded={expanded[section.key]}
+        class="dashboard-card lc-card balanced-card balanced-card--preview"
+        class:balanced-card--expanded={expanded[section.key]}
         data-section-key={section.key}
         data-section-id={section.id}
         data-reveal
         data-source-line={section.sourceLine}
       >
-        <button
-          class="dashboard-card__header"
-          type="button"
-          aria-pressed={expanded[section.key] ? 'true' : 'false'}
-          aria-controls={dashboardBodyId(section.key)}
-          onclick={() => toggleSection(section.key)}
-        >
+        <div class="dashboard-card__header">
           <span class="dashboard-card__title">{section.title}</span>
           <span class="dashboard-card__types">
             {section.blockTypes.join(' / ') || 'text'}
           </span>
-        </button>
+        </div>
         <div
-          id={dashboardBodyId(section.key)}
-          class="dashboard-card__body markdown-body"
+          id={balancedCardBodyId('dashboard', section.key)}
+          class="dashboard-card__body balanced-card__body markdown-body"
         >
           {@html section.html}
         </div>
+        <button
+          class="balanced-card__toggle"
+          type="button"
+          aria-expanded={expanded[section.key] ? 'true' : 'false'}
+          aria-controls={balancedCardBodyId('dashboard', section.key)}
+          onclick={() => toggleSection(section.key)}
+        >
+          {balancedCardToggleLabel(Boolean(expanded[section.key]))}
+        </button>
       </article>
     {/each}
   </section>
@@ -138,20 +138,17 @@
 
   .dashboard-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(22rem, 1fr));
+    grid-template-columns: repeat(auto-fill, minmax(var(--balanced-card-min-width), 1fr));
     gap: var(--space-section-md);
-    align-items: start;
+    align-items: stretch;
   }
 
   .dashboard-card {
     min-width: 0;
-    overflow: hidden;
   }
 
   .dashboard-card__header {
-    all: unset;
     box-sizing: border-box;
-    cursor: pointer;
     display: flex;
     align-items: center;
     justify-content: space-between;
@@ -162,11 +159,6 @@
     border-bottom: 1px solid var(--md-border);
     color: var(--md-fg-primary);
     background: color-mix(in srgb, var(--md-bg-tertiary) 58%, transparent);
-  }
-
-  .dashboard-card__header:hover,
-  .dashboard-card__header:focus-visible {
-    background: color-mix(in srgb, var(--md-accent) 12%, var(--md-bg-tertiary) 88%);
   }
 
   .dashboard-card__title {
@@ -186,15 +178,7 @@
   }
 
   .dashboard-card__body {
-    max-height: 18rem;
-    padding: var(--space-4) var(--space-6) var(--space-6);
-    overflow: auto;
-    transition: max-height 0.2s ease;
-  }
-
-  .dashboard-card.expanded .dashboard-card__body {
-    max-height: none;
-    overflow: visible;
+    padding: var(--space-4) var(--space-6) 0;
   }
 
   :global(.dashboard-card__body > :first-child) {
