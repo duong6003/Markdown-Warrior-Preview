@@ -8,8 +8,10 @@
   import { setupCollapsibleHeadings, restoreCollapsedState } from './lib/collapsible-headings';
   import { createDocumentModel, resolveLayout } from './lib/layout-engine';
   import { loadState, saveState } from './stores/state';
+  import { DEFAULT_THEME } from './lib/theme-registry';
   import type { LayoutOverride } from './types/layout';
   import LayoutToolbar from './components/LayoutToolbar.svelte';
+  import ThemePanel from './components/ThemePanel.svelte';
   import SlideView from './components/SlideView.svelte';
   import MagazineLayout from './layouts/MagazineLayout.svelte';
   import DocsLayout from './layouts/DocsLayout.svelte';
@@ -23,6 +25,8 @@
   let showTOC = $state(initialState.tocVisible);
   let mode = $state<'document' | 'presentation'>(initialState.mode);
   let layoutOverride = $state<LayoutOverride>(initialState.layoutOverride);
+  let selectedTheme = $state(DEFAULT_THEME);
+  let panelVisible = $state(false);
   let model = $derived(createDocumentModel(html, frontmatter));
   let selectedLayout = $derived(resolveLayout(model.detectedLayout, frontmatter, layoutOverride));
 
@@ -109,6 +113,8 @@
       case 'update':
         html = message.html;
         frontmatter = message.frontmatter;
+        selectedTheme = message.themeId;
+        document.documentElement.dataset.theme = message.themeId;
         break;
       case 'scrollTo':
         if (mode === 'document') {
@@ -124,6 +130,12 @@
     }
   });
 
+  function handleThemeSelect(themeId: string) {
+    selectedTheme = themeId;
+    document.documentElement.dataset.theme = themeId;
+    postMessage({ type: 'setTheme', themeId });
+  }
+
   function toggleMode() {
     mode = mode === 'document' ? 'presentation' : 'document';
   }
@@ -138,6 +150,7 @@
   onMount(() => {
     setupCheckboxHandler();
     setupCollapsibleHeadings();
+    document.documentElement.dataset.theme = selectedTheme;
   });
 
   postMessage({ type: 'ready' });
@@ -156,31 +169,48 @@
       override={layoutOverride}
       detectedLayout={model.detectedLayout}
       currentLayout={selectedLayout}
+      themePanelVisible={panelVisible}
       onOverrideChange={(v) => { layoutOverride = v; }}
       onTogglePresentation={toggleMode}
+      onToggleThemePanel={() => { panelVisible = !panelVisible; }}
     />
 
-    <main class="layout-scroll-root" data-active-layout={selectedLayout}>
-      {#if selectedLayout === 'magazine'}
-        <MagazineLayout {model} {showTOC} />
-      {:else if selectedLayout === 'docs'}
-        <DocsLayout {model} {showTOC} />
-      {:else if selectedLayout === 'story'}
-        <StoryLayout {model} {showTOC} />
-      {:else}
-        <DashboardLayout {model} {showTOC} />
+    <div class="preview-body">
+      <main class="layout-scroll-root" data-active-layout={selectedLayout}>
+        {#if selectedLayout === 'magazine'}
+          <MagazineLayout {model} {showTOC} />
+        {:else if selectedLayout === 'docs'}
+          <DocsLayout {model} {showTOC} />
+        {:else if selectedLayout === 'story'}
+          <StoryLayout {model} {showTOC} />
+        {:else}
+          <DashboardLayout {model} {showTOC} />
+        {/if}
+      </main>
+
+      {#if panelVisible}
+        <ThemePanel selectedTheme={selectedTheme} onSelect={handleThemeSelect} />
       {/if}
-    </main>
+    </div>
   </div>
 {/if}
 
 <style>
   .preview-root {
     min-height: 100vh;
-    background: var(--md-bg-primary);
+    background: var(--theme-bg, var(--md-bg-primary));
+    display: flex;
+    flex-direction: column;
+  }
+
+  .preview-body {
+    display: flex;
+    flex: 1;
+    overflow: hidden;
   }
 
   .layout-scroll-root {
+    flex: 1;
     height: 100vh;
     overflow-y: auto;
     scroll-behavior: smooth;
