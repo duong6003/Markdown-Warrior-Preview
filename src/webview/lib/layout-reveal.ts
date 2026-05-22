@@ -1,8 +1,12 @@
 let activeObserver: IntersectionObserver | null = null;
 
-export function setupLayoutReveal(root: ParentNode = document): void {
+export function teardownLayoutReveal(): void {
   activeObserver?.disconnect();
   activeObserver = null;
+}
+
+export function setupLayoutReveal(root: ParentNode = document): void {
+  teardownLayoutReveal();
 
   const revealElements = Array.from(root.querySelectorAll<HTMLElement>('[data-reveal]'));
   if (revealElements.length === 0) {
