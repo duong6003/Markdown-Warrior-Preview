@@ -1,4 +1,5 @@
 import './styles/theme-bridge.css';
+import './styles/themes.css';
 import './styles/markdown-body.css';
 import './styles/animations.css';
 import './styles/extensions.css';
