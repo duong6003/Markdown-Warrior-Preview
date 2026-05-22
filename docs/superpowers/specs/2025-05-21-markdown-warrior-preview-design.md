@@ -1,4 +1,4 @@
-# MarkdownWarriorPreview — Design Spec
+# Markdown Warrior Preview — Design Spec
 
 ## Overview
 

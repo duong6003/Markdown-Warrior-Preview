@@ -2,7 +2,7 @@
 
 ## Overview
 
-MarkdownWarriorPreview will support multiple visual document layouts so markdown can feel like a designed web page instead of a plain top-to-bottom article. The feature adds a webview-side layout engine, automatic layout detection, frontmatter override, and a toolbar override.
+Markdown Warrior Preview will support multiple visual document layouts so markdown can feel like a designed web page instead of a plain top-to-bottom article. The feature adds a webview-side layout engine, automatic layout detection, frontmatter override, and a toolbar override.
 
 V1 layouts:
 - `magazine`

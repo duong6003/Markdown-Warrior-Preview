@@ -1,4 +1,4 @@
-# MarkdownWarriorPreview
+# Markdown Warrior Preview
 
 A modern, beautiful markdown preview extension for VS Code with presentation mode, smooth animations, and rich features.
 

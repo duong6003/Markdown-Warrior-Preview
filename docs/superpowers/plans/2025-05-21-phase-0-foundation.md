@@ -1,6 +1,6 @@
 # Phase 0: Foundation — Implementation Plan
 
-**Goal:** Scaffold the MarkdownWarriorPreview VS Code extension project with Vite+Svelte webview, build pipeline, and working bi-directional communication bridge.
+**Goal:** Scaffold the Markdown Warrior Preview VS Code extension project with Vite+Svelte webview, build pipeline, and working bi-directional communication bridge.
 
 **Architecture:** TypeScript extension host bundled with esbuild, Svelte 5 webview bundled with Vite, postMessage bridge connecting both sides.
 
@@ -36,7 +36,7 @@ Replace the generated `package.json` with:
 ```json
 {
   "name": "markdown-warrior-preview",
-  "displayName": "MarkdownWarriorPreview",
+  "displayName": "Markdown Warrior Preview",
   "description": "A modern, beautiful markdown preview with presentation mode for VS Code",
   "version": "0.0.1",
   "publisher": "your-publisher-id",
@@ -162,7 +162,7 @@ export function activate(context: vscode.ExtensionContext) {
   const command = vscode.commands.registerCommand(
     'markdownWarrior.openPreview',
     () => {
-      vscode.window.showInformationMessage('MarkdownWarriorPreview activated!');
+    vscode.window.showInformationMessage('Markdown Warrior Preview activated!');
     }
   );
 
@@ -284,7 +284,7 @@ export default app;
 
 ```svelte
 <script lang="ts">
-  let message = $state('MarkdownWarriorPreview — Webview Ready');
+  let message = $state('Markdown Warrior Preview — Webview Ready');
 </script>
 
 <main>

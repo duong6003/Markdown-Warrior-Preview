@@ -2,7 +2,7 @@
 
 ## Overview
 
-Add a full theme system to MarkdownWarriorPreview. Each theme is a "theme pack" that bundles color scheme, syntax highlighting, font stack, and spacing into a single named preset. Users pick a theme from a side panel; the selection persists globally across all files and VS Code sessions.
+Add a full theme system to Markdown Warrior Preview. Each theme is a "theme pack" that bundles color scheme, syntax highlighting, font stack, and spacing into a single named preset. Users pick a theme from a side panel; the selection persists globally across all files and VS Code sessions.
 
 **Goal:** Let readers choose a visual experience that suits their environment and preference — from warm reading themes (Sepia, Solarized Light) to deep dark developer themes (Vesper, Pitch Black) — without any coupling to VS Code's own color theme.
 
