@@ -151,7 +151,7 @@ describe('layout engine', () => {
 <p data-source-line="5">Body text.</p>
 `;
 
-    const model = createDocumentModel(html, { layout: 'docs' });
+    const model = createDocumentModel(html, { layout: 'story' });
 
     expect(model.contentHtml).not.toContain('frontmatter-block');
     expect(model.contentHtml).toContain('<h1');
