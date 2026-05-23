@@ -39,4 +39,24 @@ describe('ThemePanel.svelte', () => {
   it('shows three swatches per theme row', () => {
     expect(source).toContain('theme.swatches.slice(0, 3)');
   });
+
+  it('renders a Typography section header', () => {
+    expect(source).toContain('Typography');
+  });
+
+  it('accepts fontBody, fontHeading, fontCode, and onFontChange props', () => {
+    expect(source).toContain('fontBody');
+    expect(source).toContain('fontHeading');
+    expect(source).toContain('fontCode');
+    expect(source).toContain('onFontChange');
+  });
+
+  it('renders three font select elements', () => {
+    const selectCount = (source.match(/<select/g) || []).length;
+    expect(selectCount).toBeGreaterThanOrEqual(3);
+  });
+
+  it('imports from font-registry', () => {
+    expect(source).toContain("from '../lib/font-registry'");
+  });
 });

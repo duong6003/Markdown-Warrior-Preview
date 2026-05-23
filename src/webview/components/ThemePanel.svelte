@@ -1,19 +1,28 @@
 <script lang="ts">
   import { THEMES } from '../lib/theme-registry';
+  import { BODY_FONTS, HEADING_FONTS, CODE_FONTS } from '../lib/font-registry';
 
   let {
     selectedTheme,
     onSelect,
+    fontBody,
+    fontHeading,
+    fontCode,
+    onFontChange,
   }: {
     selectedTheme: string;
     onSelect: (id: string) => void;
+    fontBody: string;
+    fontHeading: string;
+    fontCode: string;
+    onFontChange: (slot: 'body' | 'heading' | 'code', id: string) => void;
   } = $props();
 
   const darkThemes = THEMES.filter(theme => theme.mode === 'dark');
   const lightThemes = THEMES.filter(theme => theme.mode === 'light');
 </script>
 
-<aside class="theme-panel" aria-label="Theme selection">
+<aside class="theme-panel" aria-label="Theme and typography">
   <div class="theme-panel__header">Themes</div>
 
   <section class="theme-panel__group" aria-labelledby="theme-panel-dark">
@@ -55,6 +64,48 @@
       </button>
     {/each}
   </section>
+
+  <div class="theme-panel__divider"></div>
+  <div class="theme-panel__header">Typography</div>
+
+  <section class="theme-panel__group">
+    <div class="theme-panel__group-label">Body</div>
+    <select
+      class="theme-panel__select"
+      value={fontBody}
+      onchange={(e) => onFontChange('body', (e.target as HTMLSelectElement).value)}
+    >
+      {#each BODY_FONTS as font (font.id)}
+        <option value={font.id}>{font.label}</option>
+      {/each}
+    </select>
+  </section>
+
+  <section class="theme-panel__group">
+    <div class="theme-panel__group-label">Heading</div>
+    <select
+      class="theme-panel__select"
+      value={fontHeading}
+      onchange={(e) => onFontChange('heading', (e.target as HTMLSelectElement).value)}
+    >
+      {#each HEADING_FONTS as font (font.id)}
+        <option value={font.id}>{font.label}</option>
+      {/each}
+    </select>
+  </section>
+
+  <section class="theme-panel__group">
+    <div class="theme-panel__group-label">Code</div>
+    <select
+      class="theme-panel__select"
+      value={fontCode}
+      onchange={(e) => onFontChange('code', (e.target as HTMLSelectElement).value)}
+    >
+      {#each CODE_FONTS as font (font.id)}
+        <option value={font.id}>{font.label}</option>
+      {/each}
+    </select>
+  </section>
 </aside>
 
 <style>
@@ -79,6 +130,11 @@
     font-weight: 700;
     letter-spacing: 0.06em;
     text-transform: uppercase;
+  }
+
+  .theme-panel__divider {
+    margin: 0.75rem 0.5rem;
+    border-top: 1px solid var(--theme-border, var(--md-border));
   }
 
   .theme-panel__group {
@@ -135,5 +191,24 @@
     height: 10px;
     border: 1px solid rgba(128, 128, 128, 0.3);
     border-radius: 2px;
+  }
+
+  .theme-panel__select {
+    all: unset;
+    display: block;
+    width: 100%;
+    box-sizing: border-box;
+    padding: 0.3rem 0.5rem;
+    background: color-mix(in srgb, var(--theme-accent, var(--md-accent)) 6%, var(--theme-surface, var(--md-bg-secondary)));
+    border: 1px solid var(--theme-border, var(--md-border));
+    border-radius: var(--theme-radius, 4px);
+    color: var(--theme-text, var(--md-fg-primary));
+    font-size: 0.75rem;
+    cursor: pointer;
+    appearance: auto;
+  }
+
+  .theme-panel__select:focus {
+    outline: 1px solid var(--theme-accent, var(--md-accent));
   }
 </style>

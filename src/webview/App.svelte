@@ -9,6 +9,8 @@
   import { createDocumentModel, resolveLayout } from './lib/layout-engine';
   import { loadState, saveState } from './stores/state';
   import { DEFAULT_THEME } from './lib/theme-registry';
+  import { loadGoogleFont } from './lib/font-loader';
+  import { BODY_FONTS, HEADING_FONTS, CODE_FONTS, getFontEntry } from './lib/font-registry';
   import type { LayoutOverride } from './types/layout';
   import LayoutToolbar from './components/LayoutToolbar.svelte';
   import ThemePanel from './components/ThemePanel.svelte';
@@ -25,6 +27,9 @@
   let mode = $state<'document' | 'presentation'>(initialState.mode);
   let layoutOverride = $state<LayoutOverride>(initialState.layoutOverride);
   let selectedTheme = $state(DEFAULT_THEME);
+  let fontBody = $state(initialState.fontBody);
+  let fontHeading = $state(initialState.fontHeading);
+  let fontCode = $state(initialState.fontCode);
   let panelVisible = $state(false);
   let model = $derived(createDocumentModel(html, frontmatter));
   let selectedLayout = $derived(resolveLayout(model.detectedLayout, frontmatter, layoutOverride));
@@ -41,6 +46,13 @@
 
   $effect(() => {
     saveState({ tocVisible: showTOC, mode, layoutOverride });
+  });
+
+  $effect(() => {
+    applyFont('body', fontBody);
+    applyFont('heading', fontHeading);
+    applyFont('code', fontCode);
+    saveState({ fontBody, fontHeading, fontCode });
   });
 
   $effect(() => {
@@ -135,6 +147,24 @@
     postMessage({ type: 'setTheme', themeId });
   }
 
+  function applyFont(slot: 'body' | 'heading' | 'code', id: string) {
+    const fonts = slot === 'body' ? BODY_FONTS : slot === 'heading' ? HEADING_FONTS : CODE_FONTS;
+    const cssVar = slot === 'body' ? '--md-font-body' : slot === 'heading' ? '--md-font-heading' : '--md-font-mono';
+    try {
+      const entry = getFontEntry(id, fonts);
+      if (entry.googleFamily) loadGoogleFont(entry.googleFamily);
+      document.documentElement.style.setProperty(cssVar, entry.stack);
+    } catch {
+      // Unknown id - leave CSS var unchanged.
+    }
+  }
+
+  function handleFontChange(slot: 'body' | 'heading' | 'code', id: string) {
+    if (slot === 'body') fontBody = id;
+    else if (slot === 'heading') fontHeading = id;
+    else fontCode = id;
+  }
+
   function toggleMode() {
     mode = mode === 'document' ? 'presentation' : 'document';
   }
@@ -186,7 +216,14 @@
       </main>
 
       {#if panelVisible}
-        <ThemePanel selectedTheme={selectedTheme} onSelect={handleThemeSelect} />
+        <ThemePanel
+          selectedTheme={selectedTheme}
+          onSelect={handleThemeSelect}
+          {fontBody}
+          {fontHeading}
+          {fontCode}
+          onFontChange={handleFontChange}
+        />
       {/if}
     </div>
   </div>
