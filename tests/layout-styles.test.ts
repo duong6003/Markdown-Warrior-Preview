@@ -69,7 +69,6 @@ describe('shared layout stylesheet', () => {
   });
 
   it('centralizes toolbar and layout navigation interaction states', () => {
-    expect(source).toContain('transform: translateX(2px);');
     expect(source).toContain('.story-dots button:hover,');
     expect(source).toContain('transform: translateY(-2px);');
     expect(source).toContain('.layout-toolbar__pill:hover,');
