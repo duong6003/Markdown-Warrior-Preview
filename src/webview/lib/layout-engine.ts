@@ -13,7 +13,23 @@ const FRONTMATTER_BLOCK_RE =
 
 const LAYOUT_PRIORITY: LayoutType[] = ['story', 'dashboard'];
 
+let _lastHtml = '';
+let _lastFrontmatter: Record<string, unknown> | null = null;
+let _lastModel: DocumentModel | null = null;
+
 export function createDocumentModel(
+  html: string,
+  frontmatter: Record<string, unknown> | null = null,
+): DocumentModel {
+  if (html === _lastHtml && frontmatter === _lastFrontmatter && _lastModel !== null) return _lastModel;
+
+  _lastHtml = html;
+  _lastFrontmatter = frontmatter;
+  _lastModel = _buildDocumentModel(html, frontmatter);
+  return _lastModel;
+}
+
+function _buildDocumentModel(
   html: string,
   frontmatter: Record<string, unknown> | null = null,
 ): DocumentModel {
