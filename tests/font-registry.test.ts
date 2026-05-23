@@ -5,9 +5,17 @@ import {
   CODE_FONTS,
   getFontEntry,
   type FontEntry,
-} from '../src/webview/lib/font-registry';
+} from '../src/shared/font-registry';
+import * as webviewRegistry from '../src/webview/lib/font-registry';
 
 describe('font-registry', () => {
+  it('webview registry re-exports the shared registry', () => {
+    expect(webviewRegistry.BODY_FONTS).toBe(BODY_FONTS);
+    expect(webviewRegistry.HEADING_FONTS).toBe(HEADING_FONTS);
+    expect(webviewRegistry.CODE_FONTS).toBe(CODE_FONTS);
+    expect(webviewRegistry.getFontEntry).toBe(getFontEntry);
+  });
+
   it('BODY_FONTS has at least 4 entries', () => {
     expect(BODY_FONTS.length).toBeGreaterThanOrEqual(4);
   });
