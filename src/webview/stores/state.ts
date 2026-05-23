@@ -7,6 +7,9 @@ export interface WebviewState {
   tocVisible: boolean;
   mode: 'document' | 'presentation';
   layoutOverride: LayoutOverride;
+  fontBody: string;
+  fontHeading: string;
+  fontCode: string;
 }
 
 const DEFAULT_STATE: WebviewState = {
@@ -15,6 +18,9 @@ const DEFAULT_STATE: WebviewState = {
   tocVisible: true,
   mode: 'document',
   layoutOverride: 'auto',
+  fontBody: 'system',
+  fontHeading: 'inherit',
+  fontCode: 'cascadia',
 };
 
 export function loadState(): WebviewState {
@@ -24,9 +30,14 @@ export function loadState(): WebviewState {
     ...state,
     layoutOverride: normalizeLayoutOverride(state.layoutOverride),
     mode: state.mode === 'presentation' ? 'presentation' : 'document',
-    collapsedHeadings: Array.isArray(state.collapsedHeadings) ? state.collapsedHeadings.filter((item): item is string => typeof item === 'string') : [],
+    collapsedHeadings: Array.isArray(state.collapsedHeadings)
+      ? state.collapsedHeadings.filter((item): item is string => typeof item === 'string')
+      : [],
     tocVisible: typeof state.tocVisible === 'boolean' ? state.tocVisible : DEFAULT_STATE.tocVisible,
     scrollPosition: typeof state.scrollPosition === 'number' ? state.scrollPosition : 0,
+    fontBody: typeof state.fontBody === 'string' ? state.fontBody : DEFAULT_STATE.fontBody,
+    fontHeading: typeof state.fontHeading === 'string' ? state.fontHeading : DEFAULT_STATE.fontHeading,
+    fontCode: typeof state.fontCode === 'string' ? state.fontCode : DEFAULT_STATE.fontCode,
   };
 }
 
