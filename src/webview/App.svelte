@@ -164,6 +164,7 @@
     if (slot === 'body') fontBody = id;
     else if (slot === 'heading') fontHeading = id;
     else fontCode = id;
+    postMessage({ type: 'setFont', slot, id });
   }
 
   function toggleMode() {
@@ -181,6 +182,7 @@
     setupCheckboxHandler();
     setupCollapsibleHeadings();
     document.documentElement.dataset.theme = selectedTheme;
+    postMessage({ type: 'syncFonts', fontBody, fontHeading, fontCode });
   });
 
   postMessage({ type: 'ready' });

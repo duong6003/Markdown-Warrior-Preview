@@ -12,6 +12,8 @@ export type WebviewToHostMessage =
   | { type: 'scrollSync'; line: number }
   | { type: 'checkboxToggle'; line: number; checked: boolean }
   | { type: 'setTheme'; themeId: string }
+  | { type: 'setFont'; slot: 'body' | 'heading' | 'code'; id: string }
+  | { type: 'syncFonts'; fontBody: string; fontHeading: string; fontCode: string }
   | { type: 'ready' };
 
 export interface SourceMapEntry {
