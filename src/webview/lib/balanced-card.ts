@@ -1,4 +1,4 @@
-export type BalancedCardLayout = 'dashboard' | 'docs' | 'magazine' | 'story';
+export type BalancedCardLayout = 'article' | 'dashboard' | 'docs' | 'magazine' | 'story';
 
 export function balancedCardBodyId(layout: BalancedCardLayout, sectionKey: string): string {
   return `${layout}-balanced-body-${sectionKey.replace(/[^A-Za-z0-9_-]+/g, '-')}`;
