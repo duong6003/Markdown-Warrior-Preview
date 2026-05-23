@@ -55,6 +55,13 @@
           "command": "markdownWarrior.openPreview",
           "group": "navigation"
         }
+      ],
+      "editor/context": [
+        {
+          "when": "resourceLangId == markdown",
+          "command": "markdownWarrior.openPreview",
+          "group": "navigation"
+        }
       ]
     },
     "configuration": {
