@@ -1,0 +1,38 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" width="128" height="128">
+  <defs>
+    <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#1a2980"/>
+      <stop offset="100%" stop-color="#6b21a8"/>
+    </linearGradient>
+    <linearGradient id="glass-shine" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="rgba(255,255,255,0.25)"/>
+      <stop offset="100%" stop-color="rgba(255,255,255,0.04)"/>
+    </linearGradient>
+    <filter id="shadow" x="-10%" y="-10%" width="120%" height="120%">
+      <feDropShadow dx="0" dy="2" stdDeviation="3" flood-color="rgba(0,0,0,0.35)"/>
+    </filter>
+  </defs>
+
+  <!-- Background rounded square -->
+  <rect x="4" y="4" width="120" height="120" rx="26" ry="26" fill="url(#bg)"/>
+
+  <!-- Glass overlay panel -->
+  <rect x="16" y="16" width="96" height="96" rx="18" ry="18"
+        fill="url(#glass-shine)" opacity="0.9"/>
+
+  <!-- Inner glass border -->
+  <rect x="16" y="16" width="96" height="96" rx="18" ry="18"
+        fill="none" stroke="rgba(255,255,255,0.2)" stroke-width="1"/>
+
+  <!-- Letter M -->
+  <text x="64" y="82"
+        font-family="system-ui, -apple-system, 'Segoe UI', sans-serif"
+        font-size="62" font-weight="800"
+        text-anchor="middle"
+        fill="white"
+        filter="url(#shadow)"
+        opacity="0.95">M</text>
+
+  <!-- Accent dot — bottom right, signals "live preview" -->
+  <circle cx="102" cy="102" r="7" fill="#4fc1ff" opacity="0.9"/>
+</svg>
