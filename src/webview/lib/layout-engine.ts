@@ -17,6 +17,12 @@ let _lastHtml = '';
 let _lastFrontmatter: Record<string, unknown> | null = null;
 let _lastModel: DocumentModel | null = null;
 
+export function resetDocumentModelCache(): void {
+  _lastHtml = '';
+  _lastFrontmatter = null;
+  _lastModel = null;
+}
+
 export function createDocumentModel(
   html: string,
   frontmatter: Record<string, unknown> | null = null,

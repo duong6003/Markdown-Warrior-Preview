@@ -124,7 +124,7 @@
   .ghost-chevron {
     position: absolute;
     top: 50%;
-    left: -1px;
+    left: -3px;
     transform: translateY(-50%);
     font-size: 14px;
     line-height: 1;

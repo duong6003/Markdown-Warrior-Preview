@@ -154,8 +154,9 @@
       const entry = getFontEntry(id, fonts);
       if (entry.googleFamily) loadGoogleFont(entry.googleFamily);
       document.documentElement.style.setProperty(cssVar, entry.stack);
-    } catch {
-      // Unknown id - leave CSS var unchanged.
+    } catch (err) {
+      if (err instanceof Error && err.message.startsWith('Unknown font:')) return;
+      console.error('[MarkdownWarrior] applyFont failed:', err);
     }
   }
 
