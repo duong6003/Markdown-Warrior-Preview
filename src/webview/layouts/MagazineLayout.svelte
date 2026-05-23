@@ -1,6 +1,7 @@
 <script lang="ts">
   import { balancedCardBodyId, balancedCardToggleLabel } from '../lib/balanced-card';
   import { clipDetect } from '../lib/clip-detect';
+  import GhostNav from '../lib/GhostNav.svelte';
   import type { DocumentModel } from '../types/layout';
 
   let { model, showTOC = true }: { model: DocumentModel; showTOC?: boolean } = $props();
@@ -23,6 +24,8 @@
 </script>
 
 <div class="magazine-layout rich-layout" data-layout="magazine">
+  <GhostNav sections={model.sections} onNavigate={scrollToSection} />
+
   <header class="magazine-hero lc-card--hero" data-reveal>
     <p class="magazine-kicker">Markdown Warrior</p>
     <h1>{model.title}</h1>
@@ -31,53 +34,38 @@
     {/if}
   </header>
 
-  <div class="magazine-grid">
-    <article class="magazine-content">
-      {#each model.sections as section (section.key)}
-        <section
-          class="magazine-section lc-card balanced-card"
-          class:balanced-card--clippable={needsClip[section.key]}
-          class:balanced-card--expanded={expanded[section.key]}
-          data-section-key={section.key}
-          data-section-id={section.id}
-          data-reveal
-          data-source-line={section.sourceLine}
+  <article class="magazine-content">
+    {#each model.sections as section (section.key)}
+      <section
+        class="magazine-section lc-card balanced-card"
+        class:balanced-card--clippable={needsClip[section.key]}
+        class:balanced-card--expanded={expanded[section.key]}
+        data-section-key={section.key}
+        data-section-id={section.id}
+        data-reveal
+        data-source-line={section.sourceLine}
+      >
+        <div
+          id={balancedCardBodyId('magazine', section.key)}
+          class="magazine-section__body balanced-card__body markdown-body"
+          use:clipDetect={(needs: boolean) => { needsClip[section.key] = needs; }}
         >
-          <div
-            id={balancedCardBodyId('magazine', section.key)}
-            class="magazine-section__body balanced-card__body markdown-body"
-            use:clipDetect={(needs: boolean) => { needsClip[section.key] = needs; }}
+          {@html section.html}
+        </div>
+        {#if needsClip[section.key]}
+          <button
+            class="balanced-card__toggle"
+            type="button"
+            aria-expanded={expanded[section.key] ? 'true' : 'false'}
+            aria-controls={balancedCardBodyId('magazine', section.key)}
+            onclick={() => toggleSection(section.key)}
           >
-            {@html section.html}
-          </div>
-          {#if needsClip[section.key]}
-            <button
-              class="balanced-card__toggle"
-              type="button"
-              aria-expanded={expanded[section.key] ? 'true' : 'false'}
-              aria-controls={balancedCardBodyId('magazine', section.key)}
-              onclick={() => toggleSection(section.key)}
-            >
-              {balancedCardToggleLabel(Boolean(expanded[section.key]))}
-            </button>
-          {/if}
-        </section>
-      {/each}
-    </article>
-
-    {#if showTOC && model.sections.length > 1}
-      <aside class="magazine-rail lc-card--flat" data-reveal>
-        <h2>Sections</h2>
-        <nav aria-label="Magazine sections">
-          {#each model.sections as section (section.key)}
-            <button type="button" onclick={() => scrollToSection(section.key, section.id)}>
-              {section.title}
-            </button>
-          {/each}
-        </nav>
-      </aside>
-    {/if}
-  </div>
+            {balancedCardToggleLabel(Boolean(expanded[section.key]))}
+          </button>
+        {/if}
+      </section>
+    {/each}
+  </article>
 </div>
 
 <style>
@@ -125,13 +113,6 @@
     line-height: 1.4;
   }
 
-  .magazine-grid {
-    display: grid;
-    grid-template-columns: minmax(0, 1fr) clamp(14rem, 24%, 18rem);
-    align-items: start;
-    gap: var(--space-section-md);
-  }
-
   .magazine-content {
     display: grid;
     gap: var(--space-section-md);
@@ -145,38 +126,6 @@
   .magazine-section__body {
     padding: var(--space-section-sm);
     overflow-wrap: break-word;
-  }
-
-  .magazine-rail {
-    position: sticky;
-    top: calc(3.25rem + var(--space-4));
-    display: grid;
-    gap: var(--space-3);
-    padding: var(--space-4);
-  }
-
-  .magazine-rail h2 {
-    margin: 0;
-    color: var(--md-fg-primary);
-    font: 700 var(--text-xs) / 1.4 var(--md-font-body);
-    letter-spacing: 0.08em;
-    text-transform: uppercase;
-  }
-
-  .magazine-rail nav {
-    display: grid;
-    gap: var(--space-1);
-  }
-
-  .magazine-rail button {
-    all: unset;
-    box-sizing: border-box;
-    cursor: pointer;
-    min-height: var(--space-8);
-    padding: var(--space-2) var(--space-3);
-    border-radius: var(--radius-sm);
-    font: 600 var(--text-sm) / 1.4 var(--md-font-body);
-    overflow-wrap: anywhere;
   }
 
   :global(.magazine-section__body > :first-child) {
@@ -225,34 +174,6 @@
     width: 100%;
     overflow-x: auto;
     border-radius: var(--radius-md);
-  }
-
-  @media (max-width: 900px) {
-    .magazine-grid {
-      grid-template-columns: 1fr;
-    }
-
-    .magazine-rail {
-      position: static;
-      order: -1;
-    }
-
-    .magazine-rail nav {
-      display: flex;
-      gap: var(--space-2);
-      overflow-x: auto;
-      padding-bottom: var(--space-1);
-      scrollbar-width: none;
-    }
-
-    .magazine-rail nav::-webkit-scrollbar {
-      display: none;
-    }
-
-    .magazine-rail button {
-      flex: 0 0 auto;
-      border: 1px solid var(--md-border);
-    }
   }
 
   @media (max-width: 560px) {

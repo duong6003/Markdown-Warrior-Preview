@@ -5,10 +5,7 @@ const source = readFileSync('src/webview/layouts/DocsLayout.svelte', 'utf8');
 
 describe('DocsLayout rich shell', () => {
   it('renders the required rich docs structure from document sections', () => {
-    compile(source, {
-      filename: 'DocsLayout.svelte',
-      generate: 'client',
-    });
+    compile(source, { filename: 'DocsLayout.svelte', generate: 'client' });
 
     expect(source).toContain('let { model, showTOC = true }');
     expect(source).not.toContain("import { balancedCardBodyId, balancedCardToggleLabel } from '../lib/balanced-card';");
@@ -40,39 +37,34 @@ describe('DocsLayout rich shell', () => {
     expect(source).not.toContain('layout-card');
   });
 
-  it('shows a conditional docs sidebar and scrolls unique wrappers first', () => {
+  it('uses GhostNav for section navigation', () => {
     expect(source).toContain('function scrollToSection(sectionKey: string, sectionId: string)');
     expect(source).toContain('document.querySelector');
     expect(source).toContain('[data-section-key="');
     expect(source).toContain('CSS.escape');
     expect(source).toContain('document.getElementById(sectionId)');
-    expect(source.indexOf('[data-section-key="')).toBeLessThan(
-      source.indexOf('document.getElementById(sectionId)'),
-    );
     expect(source).toContain("scrollIntoView({ behavior: 'smooth', block: 'start' })");
-    expect(source).toContain('{#if hasSidebar}');
-    expect(source).toContain('class="docs-sidebar lc-card--flat"');
-    expect(source).toContain('Docs');
-    expect(source).toContain('<nav aria-label="Document sections">');
-    expect(source).toContain('onclick={() => scrollToSection(section.key, section.id)}');
-    expect(source).toContain('class:deep={section.level > 2}');
-    expect(source).toContain('{section.title}');
+    expect(source).toContain("import GhostNav from '../lib/GhostNav.svelte'");
+    expect(source).toContain('{#if showTOC}');
+    expect(source).toContain('<GhostNav sections={model.sections}');
+    expect(source).toContain('onNavigate={scrollToSection}');
+    expect(source).not.toContain('class="docs-sidebar');
+    expect(source).not.toContain('{#if hasSidebar}');
   });
 
-  it('expands content to one column when the docs sidebar is omitted', () => {
-    expect(source).toContain('let hasSidebar = $derived(showTOC && model.sections.length > 1)');
-    expect(source).toContain('class:no-sidebar={!hasSidebar}');
-    expect(source).toContain('{#if hasSidebar}');
-    expect(source).not.toContain('{#if showTOC && model.sections.length > 1}');
-    expect(source).toContain('.docs-layout.no-sidebar');
+  it('uses full-width single-column layout', () => {
+    expect(source).not.toContain('let hasSidebar');
+    expect(source).not.toContain('class:no-sidebar');
     expect(source).toContain('grid-template-columns: 1fr;');
-    expect(source).toContain('grid-column: 1 / -1;');
+    expect(source).toContain('max-width: 80ch;');
+    expect(source).not.toContain('grid-template-columns: clamp(14rem, 22%, 20rem) minmax(0, 1fr);');
+    expect(source).not.toContain('grid-column: 1 / -1;');
   });
 
-  it('uses tokenized docs spacing, type, and proportional grid values', () => {
-    expect(source).toContain('grid-template-columns: clamp(14rem, 22%, 20rem) minmax(0, 1fr);');
+  it('uses tokenized docs spacing and typography', () => {
+    expect(source).toContain('grid-template-columns: 1fr;');
     expect(source).toContain('gap: var(--space-section-md);');
-    expect(source).toContain('max-width: 72ch;');
+    expect(source).toContain('max-width: 80ch;');
     expect(source).toContain('.docs-section__body {');
     expect(source).toContain('padding: var(--space-section-sm);');
     expect(source).toContain(':global(.docs-section__body > :first-child)');

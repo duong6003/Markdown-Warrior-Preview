@@ -5,10 +5,7 @@ const source = readFileSync('src/webview/layouts/MagazineLayout.svelte', 'utf8')
 
 describe('MagazineLayout rich shell', () => {
   it('renders the required rich magazine structure from document sections', () => {
-    compile(source, {
-      filename: 'MagazineLayout.svelte',
-      generate: 'client',
-    });
+    compile(source, { filename: 'MagazineLayout.svelte', generate: 'client' });
 
     expect(source).toContain("import { balancedCardBodyId, balancedCardToggleLabel } from '../lib/balanced-card';");
     expect(source).toContain("import { clipDetect } from '../lib/clip-detect';");
@@ -48,7 +45,7 @@ describe('MagazineLayout rich shell', () => {
     expect(source).not.toContain('layout-card');
   });
 
-  it('shows a conditional section rail and scrolls sections smoothly', () => {
+  it('uses GhostNav for section navigation', () => {
     expect(source).toContain('function scrollToSection(sectionKey: string, sectionId: string)');
     expect(source).toContain('document.getElementById(sectionId)');
     expect(source).toContain('document.querySelector');
@@ -58,19 +55,19 @@ describe('MagazineLayout rich shell', () => {
       source.indexOf('document.getElementById(sectionId)'),
     );
     expect(source).toContain("scrollIntoView({ behavior: 'smooth', block: 'start' })");
-    expect(source).toContain('{#if showTOC && model.sections.length > 1}');
-    expect(source).toContain('class="magazine-rail lc-card--flat"');
-    expect(source).toContain('Sections');
-    expect(source).toContain('onclick={() => scrollToSection(section.key, section.id)}');
-    expect(source).toContain('{section.title}');
+    expect(source).toContain("import GhostNav from '../lib/GhostNav.svelte'");
+    expect(source).toContain('<GhostNav sections={model.sections}');
+    expect(source).toContain('onNavigate={scrollToSection}');
+    expect(source).not.toContain('class="magazine-rail');
+    expect(source).not.toContain('{#if showTOC && model.sections.length > 1}');
+    expect(source).not.toMatch(/\{#if\s+[^}]*showTOC/);
   });
 
-  it('uses tokenized magazine hero, rail, and section proportions', () => {
+  it('uses tokenized magazine hero and section proportions', () => {
     expect(source).toContain('gap: var(--space-section-md);');
     expect(source).toContain('padding: var(--space-section-xl);');
     expect(source).toContain('font: 800 var(--text-hero) / 0.98 var(--md-font-heading, var(--md-font-body));');
     expect(source).toContain('font-size: var(--text-lg);');
-    expect(source).toContain('grid-template-columns: minmax(0, 1fr) clamp(14rem, 24%, 18rem);');
     expect(source).toContain('font: 700 var(--text-xs) / 1.4 var(--md-font-body);');
     expect(source).toContain('.magazine-section__body {');
     expect(source).toContain('padding: var(--space-section-sm);');
@@ -81,5 +78,6 @@ describe('MagazineLayout rich shell', () => {
     expect(source).not.toContain('--layout-');
     expect(source).not.toContain('font: 800 5rem/0.95');
     expect(source).not.toContain('translateX(3px)');
+    expect(source).not.toContain('grid-template-columns: minmax(0, 1fr) clamp(14rem, 24%, 18rem);');
   });
 });
