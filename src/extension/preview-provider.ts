@@ -1,12 +1,16 @@
 import * as vscode from 'vscode';
 import * as path from 'path';
 import type { HostToWebviewMessage, WebviewToHostMessage } from '../shared/messages';
+import type { ExportConfig } from '../shared/export-config';
 import { MarkdownEngine } from './markdown-engine';
 import { ScrollSync } from './scroll-sync';
 import { AssetResolver } from './asset-resolver';
 import { DEFAULT_THEME, getTheme } from '../shared/theme-registry';
 
 const THEME_GLOBAL_STATE_KEY = 'markdownWarrior.selectedTheme';
+const FONT_BODY_KEY = 'markdownWarrior.fontBody';
+const FONT_HEADING_KEY = 'markdownWarrior.fontHeading';
+const FONT_CODE_KEY = 'markdownWarrior.fontCode';
 
 export class PreviewProvider {
   private panel: vscode.WebviewPanel | undefined;
@@ -30,6 +34,15 @@ export class PreviewProvider {
     if (this.panel) {
       this.panel.webview.postMessage({ type: 'togglePresentation' });
     }
+  }
+
+  public getExportConfig(): ExportConfig {
+    return {
+      themeId: this.selectedThemeId,
+      fontBody: this.context.globalState.get<string>(FONT_BODY_KEY, 'system'),
+      fontHeading: this.context.globalState.get<string>(FONT_HEADING_KEY, 'inherit'),
+      fontCode: this.context.globalState.get<string>(FONT_CODE_KEY, 'cascadia'),
+    };
   }
 
   public show(editor: vscode.TextEditor) {
@@ -143,6 +156,22 @@ export class PreviewProvider {
         break;
       case 'setTheme':
         await this.setTheme(message.themeId);
+        break;
+      case 'setFont': {
+        const key = message.slot === 'body'
+          ? FONT_BODY_KEY
+          : message.slot === 'heading'
+            ? FONT_HEADING_KEY
+            : FONT_CODE_KEY;
+        await this.context.globalState.update(key, message.id);
+        break;
+      }
+      case 'syncFonts':
+        await Promise.all([
+          this.context.globalState.update(FONT_BODY_KEY, message.fontBody),
+          this.context.globalState.update(FONT_HEADING_KEY, message.fontHeading),
+          this.context.globalState.update(FONT_CODE_KEY, message.fontCode),
+        ]);
         break;
     }
   }
