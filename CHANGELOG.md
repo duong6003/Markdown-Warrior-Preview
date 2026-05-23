@@ -1,5 +1,31 @@
 # Changelog
 
+## [0.3.0] - 2026-05-23
+
+### Added
+- Ghost nav gradient strip: a 3 px accent-colored strip at the left edge signals "hover here" when the overlay nav is available. Fades out when the panel opens.
+
+### Changed
+- `docs` and `magazine` layouts consolidated into a single **Article** layout. Article is the new general-purpose reading layout for all long-form content.
+- Layout toolbar and auto-detection now show `Article` instead of `Magazine`/`Docs`.
+- Saved `layoutOverride: 'docs'` or `'magazine'` from previous versions gracefully falls back to auto-detect — no migration needed.
+
+### Removed
+- `Docs` layout removed (was redundant after the ghost nav refactor — both layouts shared the same overlay nav and section-card structure).
+
+---
+
+## [0.2.0] - 2026-05-23
+
+### Added
+- **Ghost Nav** (`GhostNav.svelte`): hover-triggered overlay navigation for Docs and Magazine layouts. Replaces the permanent sidebar and rail — content now uses the full viewport width.
+- Hover trigger zone: fixed 20 px strip at the left edge. Panel appears via a smooth fly transition (`x: −220`, 180 ms, `cubicOut`).
+- 150 ms debounce ensures a smooth handoff between the edge zone and the panel without flicker.
+- Panel is centered vertically and respects deep (H3+) headings with indented entries.
+- Mobile: ghost nav hidden at ≤ 900 px (full-width layout retained).
+
+---
+
 ## [0.1.0] - 2026-05-23
 
 ### Added
