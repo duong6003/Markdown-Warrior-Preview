@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { onDestroy } from 'svelte';
+  import { onDestroy, onMount } from 'svelte';
   import { cubicOut } from 'svelte/easing';
   import { fly } from 'svelte/transition';
   import type { DocumentSection } from '../types/layout';
@@ -13,7 +13,21 @@
   } = $props();
 
   let navVisible = $state(false);
+  let chevronPulse = $state(false);
   let hideTimeout: ReturnType<typeof setTimeout> | undefined;
+  let pulseTimeout: ReturnType<typeof setTimeout> | undefined;
+
+  onMount(() => {
+    chevronPulse = true;
+    pulseTimeout = setTimeout(() => {
+      chevronPulse = false;
+    }, 700);
+  });
+
+  onDestroy(() => {
+    clearTimeout(hideTimeout);
+    clearTimeout(pulseTimeout);
+  });
 
   function showNav() {
     clearTimeout(hideTimeout);
@@ -25,15 +39,17 @@
       navVisible = false;
     }, 150);
   }
-
-  onDestroy(() => {
-    clearTimeout(hideTimeout);
-  });
 </script>
 
 {#if sections.length > 1}
   <div class="ghost-nav">
     <div class="ghost-strip" class:hidden={navVisible}></div>
+    <span
+      class="ghost-chevron"
+      class:hidden={navVisible}
+      class:pulse={chevronPulse}
+      aria-hidden="true"
+    >‹</span>
     <div
       class="ghost-edge-zone"
       role="presentation"
@@ -96,13 +112,45 @@
       var(--md-accent) 75%,
       transparent 100%
     );
-    opacity: 0.4;
+    opacity: 0.65;
     pointer-events: none;
     transition: opacity 0.15s;
   }
 
   .ghost-strip.hidden {
     opacity: 0;
+  }
+
+  .ghost-chevron {
+    position: absolute;
+    top: 50%;
+    left: -1px;
+    transform: translateY(-50%);
+    font-size: 14px;
+    line-height: 1;
+    color: var(--md-accent);
+    opacity: 0.5;
+    pointer-events: none;
+    transition: opacity 0.15s ease;
+    user-select: none;
+  }
+
+  .ghost-chevron.hidden {
+    opacity: 0;
+  }
+
+  .ghost-nav:hover .ghost-chevron:not(.hidden) {
+    opacity: 1;
+  }
+
+  @keyframes chevron-pulse {
+    0%   { opacity: 0.5; transform: translateY(-50%) scale(1); }
+    40%  { opacity: 1;   transform: translateY(-50%) scale(1.3); }
+    100% { opacity: 0.5; transform: translateY(-50%) scale(1); }
+  }
+
+  .ghost-chevron.pulse {
+    animation: chevron-pulse 0.65s ease-out forwards;
   }
 
   .ghost-nav-panel {

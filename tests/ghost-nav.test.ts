@@ -52,9 +52,34 @@ describe('GhostNav', () => {
     expect(source).toContain('width: 3px;');
     expect(source).toContain('linear-gradient(');
     expect(source).toContain('var(--md-accent)');
-    expect(source).toContain('opacity: 0.4;');
+    expect(source).toContain('opacity: 0.65;');
     expect(source).toContain('.ghost-strip.hidden {');
     expect(source).toContain('opacity: 0;');
     expect(source).toContain('pointer-events: none;');
+  });
+
+  it('renders a ghost-chevron element alongside the strip', () => {
+    expect(source).toContain('ghost-chevron');
+    expect(source).toContain('‹');
+  });
+
+  it('hides the chevron when nav panel is open', () => {
+    // The chevron must share the same hidden condition as the strip
+    const hiddenMatches = (source.match(/class:hidden={navVisible}/g) || []).length;
+    expect(hiddenMatches).toBeGreaterThanOrEqual(2);
+  });
+
+  it('defines a pulse keyframe animation for the chevron', () => {
+    expect(source).toContain('@keyframes chevron-pulse');
+    expect(source).toContain('.ghost-chevron.pulse');
+  });
+
+  it('brightens chevron on hover via parent selector', () => {
+    expect(source).toContain('.ghost-nav:hover .ghost-chevron');
+  });
+
+  it('clears pulse timeout on destroy', () => {
+    expect(source).toContain('pulseTimeout');
+    expect(source).toContain('clearTimeout(pulseTimeout)');
   });
 });
