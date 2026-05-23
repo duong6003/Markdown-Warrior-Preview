@@ -11,7 +11,7 @@ import {
 const FRONTMATTER_BLOCK_RE =
   /\s*<div class="frontmatter-block"[\s\S]*?<table class="frontmatter-table">[\s\S]*?<\/table>\s*<\/div>\s*/i;
 
-const LAYOUT_PRIORITY: LayoutType[] = ['story', 'dashboard', 'docs', 'magazine'];
+const LAYOUT_PRIORITY: LayoutType[] = ['story', 'dashboard'];
 
 export function createDocumentModel(
   html: string,
@@ -115,17 +115,12 @@ function detectLayout(signals: LayoutSignals): LayoutType {
       signals.taskCount * 4 +
       signals.listCount * 2 +
       Math.min(signals.numberCount, 6),
-    docs:
-      signals.codeBlockCount * 4 +
-      signals.h3PlusCount * 2 +
-      signals.listCount +
-      (signals.headingCount >= 5 ? 2 : 0),
-    magazine:
+    article:
       signals.paragraphCount + signals.imageCount * 2 + signals.blockquoteCount + 2,
   };
 
-  let best: LayoutType = 'magazine';
-  let bestScore = scores.magazine;
+  let best: LayoutType = 'article';
+  let bestScore = scores.article;
 
   for (const layout of LAYOUT_PRIORITY) {
     const score = scores[layout];

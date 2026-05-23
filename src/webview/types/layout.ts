@@ -1,4 +1,4 @@
-export const LAYOUT_TYPES = ['magazine', 'docs', 'story', 'dashboard'] as const;
+export const LAYOUT_TYPES = ['article', 'story', 'dashboard'] as const;
 
 export type LayoutType = typeof LAYOUT_TYPES[number];
 export type LayoutOverride = LayoutType | 'auto';

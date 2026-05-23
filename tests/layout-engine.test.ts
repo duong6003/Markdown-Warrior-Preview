@@ -11,10 +11,10 @@ const articleHtml = `
 `;
 
 describe('layout engine', () => {
-  it('falls back to magazine for article-like content', () => {
+  it('falls back to article for article-like content', () => {
     const model = createDocumentModel(articleHtml, null);
 
-    expect(model.detectedLayout).toBe('magazine');
+    expect(model.detectedLayout).toBe('article');
     expect(model.title).toBe('Beautiful Markdown');
     expect(model.description).toContain('long intro paragraph');
     expect(model.sections.length).toBeGreaterThan(0);
@@ -128,30 +128,11 @@ describe('layout engine', () => {
     expect(model.stats.completedTaskCount).toBe(1);
   });
 
-  it('detects docs layout from deep headings and code blocks', () => {
-    const html = `
-<h1 id="api-guide" data-source-line="0">API Guide</h1>
-<h2 id="install" data-source-line="2">Install</h2>
-<pre data-source-line="4"><code>npm install package</code></pre>
-<h2 id="usage" data-source-line="8">Usage</h2>
-<h3 id="options" data-source-line="10">Options</h3>
-<ul data-source-line="12"><li>One</li><li>Two</li></ul>
-<h3 id="examples" data-source-line="15">Examples</h3>
-<pre data-source-line="17"><code>const x = 1;</code></pre>
-`;
-
-    const model = createDocumentModel(html, null);
-
-    expect(model.detectedLayout).toBe('docs');
-    expect(model.signals.codeBlockCount).toBe(2);
-    expect(model.signals.h3PlusCount).toBe(2);
-  });
-
   it('uses valid frontmatter layout before auto detection', () => {
-    const model = createDocumentModel(articleHtml, { layout: 'docs' });
+    const model = createDocumentModel(articleHtml, { layout: 'story' });
 
-    expect(model.detectedLayout).toBe('magazine');
-    expect(resolveLayout(model.detectedLayout, { layout: 'docs' }, 'auto')).toBe('docs');
+    expect(model.detectedLayout).toBe('article');
+    expect(resolveLayout(model.detectedLayout, { layout: 'story' }, 'auto')).toBe('story');
   });
 
   it('uses toolbar override when frontmatter has no valid layout', () => {
