@@ -228,10 +228,10 @@ export class PreviewProvider {
 
     const csp = [
       `default-src 'none'`,
-      `style-src ${webview.cspSource} 'unsafe-inline'`,
+      `style-src ${webview.cspSource} 'unsafe-inline' https://fonts.googleapis.com`,
       `script-src 'nonce-${nonce}'`,
       `img-src ${webview.cspSource} https: data:`,
-      `font-src ${webview.cspSource}`,
+      `font-src ${webview.cspSource} https://fonts.gstatic.com`,
     ].join('; ');
 
     return `<!DOCTYPE html>
