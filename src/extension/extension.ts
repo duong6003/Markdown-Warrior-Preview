@@ -40,10 +40,11 @@ export async function activate(context: vscode.ExtensionContext) {
 
   const exportHTMLCmd = vscode.commands.registerCommand(
     'markdownWarrior.exportHTML',
-    () => {
+    async () => {
       const editor = vscode.window.activeTextEditor;
       if (editor && editor.document.languageId === 'markdown') {
-        exporter.exportHTML(editor);
+        const config = previewProvider.getExportConfig();
+        await exporter.exportHTML(editor, config);
       } else {
         vscode.window.showWarningMessage('Open a Markdown file first.');
       }
