@@ -33,6 +33,7 @@
 
 {#if sections.length > 1}
   <div class="ghost-nav">
+    <div class="ghost-strip" class:hidden={navVisible}></div>
     <div
       class="ghost-edge-zone"
       role="presentation"
@@ -80,6 +81,28 @@
     width: 20px;
     cursor: pointer;
     pointer-events: all;
+  }
+
+  .ghost-strip {
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    width: 3px;
+    background: linear-gradient(
+      to bottom,
+      transparent 0%,
+      var(--md-accent) 25%,
+      var(--md-accent) 75%,
+      transparent 100%
+    );
+    opacity: 0.4;
+    pointer-events: none;
+    transition: opacity 0.15s;
+  }
+
+  .ghost-strip.hidden {
+    opacity: 0;
   }
 
   .ghost-nav-panel {

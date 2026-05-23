@@ -44,4 +44,17 @@ describe('GhostNav', () => {
     expect(source).toContain('@media (max-width: 900px)');
     expect(source).toContain('display: none');
   });
+
+  it('shows a gradient strip affordance at the left edge', () => {
+    expect(source).toContain('class="ghost-strip"');
+    expect(source).toContain('class:hidden={navVisible}');
+    expect(source).toContain('.ghost-strip {');
+    expect(source).toContain('width: 3px;');
+    expect(source).toContain('linear-gradient(');
+    expect(source).toContain('var(--md-accent)');
+    expect(source).toContain('opacity: 0.4;');
+    expect(source).toContain('.ghost-strip.hidden {');
+    expect(source).toContain('opacity: 0;');
+    expect(source).toContain('pointer-events: none;');
+  });
 });
