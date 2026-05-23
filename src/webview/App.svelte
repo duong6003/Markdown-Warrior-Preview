@@ -13,8 +13,7 @@
   import LayoutToolbar from './components/LayoutToolbar.svelte';
   import ThemePanel from './components/ThemePanel.svelte';
   import SlideView from './components/SlideView.svelte';
-  import MagazineLayout from './layouts/MagazineLayout.svelte';
-  import DocsLayout from './layouts/DocsLayout.svelte';
+  import ArticleLayout from './layouts/ArticleLayout.svelte';
   import StoryLayout from './layouts/StoryLayout.svelte';
   import DashboardLayout from './layouts/DashboardLayout.svelte';
 
@@ -177,10 +176,8 @@
 
     <div class="preview-body">
       <main class="layout-scroll-root" data-active-layout={selectedLayout}>
-        {#if selectedLayout === 'magazine'}
-          <MagazineLayout {model} {showTOC} />
-        {:else if selectedLayout === 'docs'}
-          <DocsLayout {model} {showTOC} />
+        {#if selectedLayout === 'article'}
+          <ArticleLayout {model} {showTOC} />
         {:else if selectedLayout === 'story'}
           <StoryLayout {model} {showTOC} />
         {:else}

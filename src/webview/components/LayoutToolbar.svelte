@@ -2,16 +2,14 @@
   import type { LayoutOverride, LayoutType } from '../types/layout';
 
   const labels: Record<LayoutType, string> = {
-    magazine: 'Magazine',
-    docs: 'Docs',
+    article: 'Article',
     story: 'Story',
     dashboard: 'Dashboard',
   };
 
   const options: { value: LayoutOverride; label: string }[] = [
     { value: 'auto', label: 'Auto' },
-    { value: 'magazine', label: 'Magazine' },
-    { value: 'docs', label: 'Docs' },
+    { value: 'article', label: 'Article' },
     { value: 'story', label: 'Story' },
     { value: 'dashboard', label: 'Dashboard' },
   ];
