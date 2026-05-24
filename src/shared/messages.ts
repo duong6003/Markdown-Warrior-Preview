@@ -14,6 +14,8 @@ export type WebviewToHostMessage =
   | { type: 'setTheme'; themeId: string }
   | { type: 'setFont'; slot: 'body' | 'heading' | 'code'; id: string }
   | { type: 'syncFonts'; fontBody: string; fontHeading: string; fontCode: string }
+  | { type: 'exportHTML' }
+  | { type: 'exportPDF' }
   | { type: 'ready' };
 
 export interface SourceMapEntry {
