@@ -12,4 +12,9 @@ describe('extension exportHTML command config wiring', () => {
   it('uses async command handler for HTML export', () => {
     expect(source).toMatch(/markdownWarrior\.exportHTML',[\s\S]*async \(\) =>/);
   });
+
+  it('passes config into exporter.exportPDF and uses async handler', () => {
+    expect(source).toContain('await exporter.exportPDF(editor, config)');
+    expect(source).toMatch(/markdownWarrior\.exportPDF',[\s\S]*async \(\) =>/);
+  });
 });

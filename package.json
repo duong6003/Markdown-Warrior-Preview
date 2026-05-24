@@ -102,8 +102,9 @@
     }
   },
   "scripts": {
-    "vscode:prepublish": "npm run build:extension && npm run build:webview",
-    "build": "npm run build:extension && npm run build:webview",
+    "vscode:prepublish": "npm run build:export-styles && npm run build:extension && npm run build:webview",
+    "build": "npm run build:export-styles && npm run build:extension && npm run build:webview",
+    "build:export-styles": "node scripts/copy-export-styles.js",
     "build:extension": "esbuild ././src/extension/extension.ts --bundle --outfile=dist/extension/extension.js --external:vscode --format=cjs --platform=node",
     "build:webview": "vite build",
     "watch:extension": "esbuild src/extension/extension.ts --bundle --outfile=dist/extension/extension.js --external:vscode --format=cjs --platform=node --watch",

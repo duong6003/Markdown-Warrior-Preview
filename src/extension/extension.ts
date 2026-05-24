@@ -17,7 +17,7 @@ export async function activate(context: vscode.ExtensionContext) {
   } catch (err) {
     console.error('[MarkdownWarrior] engine.initialize failed:', err);
   }
-  const exporter = new Exporter(engine);
+  const exporter = new Exporter(engine, context.extensionUri);
 
   const openPreviewCmd = vscode.commands.registerCommand(
     'markdownWarrior.openPreview',
@@ -53,10 +53,11 @@ export async function activate(context: vscode.ExtensionContext) {
 
   const exportPDFCmd = vscode.commands.registerCommand(
     'markdownWarrior.exportPDF',
-    () => {
+    async () => {
       const editor = vscode.window.activeTextEditor;
       if (editor && editor.document.languageId === 'markdown') {
-        exporter.exportPDF(editor);
+        const config = previewProvider.getExportConfig();
+        await exporter.exportPDF(editor, config);
       } else {
         vscode.window.showWarningMessage('Open a Markdown file first.');
       }

@@ -1,0 +1,202 @@
+/* Default = Catppuccin Mocha (applied when no data-theme is set) */
+:root {
+  --theme-bg: #1e1e2e;
+  --theme-surface: #313244;
+  --theme-text: #cdd6f4;
+  --theme-text-muted: #a6adc8;
+  --theme-heading: #cba6f7;
+  --theme-accent: #89b4fa;
+  --theme-border: #45475a;
+  --theme-shadow: rgba(0, 0, 0, 0.4);
+  --theme-font-body: system-ui, sans-serif;
+  --theme-font-mono: 'Cascadia Code', 'JetBrains Mono', monospace;
+  --theme-radius: 6px;
+}
+
+:root[data-theme="catppuccin-mocha"] {
+  --theme-bg: #1e1e2e;
+  --theme-surface: #313244;
+  --theme-text: #cdd6f4;
+  --theme-text-muted: #a6adc8;
+  --theme-heading: #cba6f7;
+  --theme-accent: #89b4fa;
+  --theme-border: #45475a;
+  --theme-shadow: rgba(0, 0, 0, 0.4);
+  --theme-font-body: system-ui, sans-serif;
+  --theme-font-mono: 'Cascadia Code', 'JetBrains Mono', monospace;
+  --theme-radius: 6px;
+}
+
+:root[data-theme="catppuccin-latte"] {
+  --theme-bg: #eff1f5;
+  --theme-surface: #e6e9ef;
+  --theme-text: #4c4f69;
+  --theme-text-muted: #8c8fa1;
+  --theme-heading: #8839ef;
+  --theme-accent: #1e66f5;
+  --theme-border: #ccd0da;
+  --theme-shadow: rgba(76, 79, 105, 0.15);
+  --theme-font-body: system-ui, sans-serif;
+  --theme-font-mono: 'Cascadia Code', 'JetBrains Mono', monospace;
+  --theme-radius: 6px;
+}
+
+:root[data-theme="github-dark"] {
+  --theme-bg: #0d1117;
+  --theme-surface: #161b22;
+  --theme-text: #e6edf3;
+  --theme-text-muted: #8b949e;
+  --theme-heading: #79c0ff;
+  --theme-accent: #58a6ff;
+  --theme-border: #30363d;
+  --theme-shadow: rgba(0, 0, 0, 0.5);
+  --theme-font-body: system-ui, sans-serif;
+  --theme-font-mono: 'Cascadia Code', 'JetBrains Mono', monospace;
+  --theme-radius: 6px;
+}
+
+:root[data-theme="github-light"] {
+  --theme-bg: #ffffff;
+  --theme-surface: #f6f8fa;
+  --theme-text: #24292f;
+  --theme-text-muted: #57606a;
+  --theme-heading: #24292f;
+  --theme-accent: #0969da;
+  --theme-border: #d0d7de;
+  --theme-shadow: rgba(140, 149, 159, 0.2);
+  --theme-font-body: system-ui, sans-serif;
+  --theme-font-mono: 'Cascadia Code', 'JetBrains Mono', monospace;
+  --theme-radius: 6px;
+}
+
+:root[data-theme="dracula"] {
+  --theme-bg: #282a36;
+  --theme-surface: #44475a;
+  --theme-text: #f8f8f2;
+  --theme-text-muted: #6272a4;
+  --theme-heading: #ff79c6;
+  --theme-accent: #bd93f9;
+  --theme-border: #44475a;
+  --theme-shadow: rgba(0, 0, 0, 0.4);
+  --theme-font-body: system-ui, sans-serif;
+  --theme-font-mono: 'Cascadia Code', 'JetBrains Mono', monospace;
+  --theme-radius: 6px;
+}
+
+:root[data-theme="tokyo-night"] {
+  --theme-bg: #1a1b26;
+  --theme-surface: #24283b;
+  --theme-text: #c0caf5;
+  --theme-text-muted: #565f89;
+  --theme-heading: #7aa2f7;
+  --theme-accent: #bb9af7;
+  --theme-border: #292e42;
+  --theme-shadow: rgba(0, 0, 0, 0.5);
+  --theme-font-body: system-ui, sans-serif;
+  --theme-font-mono: 'Cascadia Code', 'JetBrains Mono', monospace;
+  --theme-radius: 6px;
+}
+
+:root[data-theme="nord"] {
+  --theme-bg: #2e3440;
+  --theme-surface: #3b4252;
+  --theme-text: #eceff4;
+  --theme-text-muted: #9099aa;
+  --theme-heading: #88c0d0;
+  --theme-accent: #81a1c1;
+  --theme-border: #4c566a;
+  --theme-shadow: rgba(0, 0, 0, 0.4);
+  --theme-font-body: system-ui, sans-serif;
+  --theme-font-mono: 'Cascadia Code', 'JetBrains Mono', monospace;
+  --theme-radius: 6px;
+}
+
+:root[data-theme="high-contrast-dark"] {
+  --theme-bg: #000000;
+  --theme-surface: #0a0a0a;
+  --theme-text: #ffffff;
+  --theme-text-muted: #aaaaaa;
+  --theme-heading: #ffffff;
+  --theme-accent: #00ff00;
+  --theme-border: #ffffff;
+  --theme-shadow: rgba(255, 255, 255, 0.1);
+  --theme-font-body: system-ui, sans-serif;
+  --theme-font-mono: 'Cascadia Code', 'JetBrains Mono', monospace;
+  --theme-radius: 2px;
+}
+
+:root[data-theme="vesper"] {
+  --theme-bg: #101010;
+  --theme-surface: #1a1a1a;
+  --theme-text: #ffffff;
+  --theme-text-muted: #8a8a8a;
+  --theme-heading: #ffc799;
+  --theme-accent: #99ffe4;
+  --theme-border: #2a2a2a;
+  --theme-shadow: rgba(0, 0, 0, 0.6);
+  --theme-font-body: system-ui, sans-serif;
+  --theme-font-mono: 'Cascadia Code', 'JetBrains Mono', monospace;
+  --theme-radius: 6px;
+}
+
+:root[data-theme="pitch-black"] {
+  --theme-bg: #000000;
+  --theme-surface: #0d0d0d;
+  --theme-text: #e0e0e0;
+  --theme-text-muted: #888888;
+  --theme-heading: #e0e0e0;
+  --theme-accent: #58a6ff;
+  --theme-border: #1a1a1a;
+  --theme-shadow: rgba(0, 0, 0, 0.8);
+  --theme-font-body: system-ui, sans-serif;
+  --theme-font-mono: 'Cascadia Code', 'JetBrains Mono', monospace;
+  --theme-radius: 6px;
+}
+
+:root[data-theme="sepia"] {
+  --theme-bg: #f4ecd8;
+  --theme-surface: #ede3cc;
+  --theme-text: #3d2b1f;
+  --theme-text-muted: #8b7355;
+  --theme-heading: #5c3d2e;
+  --theme-accent: #8b6914;
+  --theme-border: #d4b896;
+  --theme-shadow: rgba(61, 43, 31, 0.15);
+  --theme-font-body: Georgia, serif;
+  --theme-font-mono: 'Cascadia Code', 'JetBrains Mono', monospace;
+  --theme-radius: 4px;
+}
+
+:root[data-theme="solarized-light"] {
+  --theme-bg: #fdf6e3;
+  --theme-surface: #eee8d5;
+  --theme-text: #657b83;
+  --theme-text-muted: #93a1a1;
+  --theme-heading: #268bd2;
+  --theme-accent: #2aa198;
+  --theme-border: #d3cbb8;
+  --theme-shadow: rgba(101, 123, 131, 0.15);
+  --theme-font-body: system-ui, sans-serif;
+  --theme-font-mono: 'Cascadia Code', 'JetBrains Mono', monospace;
+  --theme-radius: 6px;
+}
+
+:root,
+:root[data-theme] {
+  --md-bg-primary: var(--theme-bg);
+  --md-bg-secondary: var(--theme-surface);
+  --md-bg-tertiary: var(--theme-surface);
+  --md-fg-primary: var(--theme-text);
+  --md-fg-secondary: var(--theme-text-muted);
+  --md-fg-muted: var(--theme-text-muted);
+  --md-accent: var(--theme-accent);
+  --md-accent-hover: var(--theme-heading);
+  --md-border: var(--theme-border);
+  --md-code-bg: var(--theme-surface);
+  --md-selection: color-mix(in srgb, var(--theme-accent) 30%, transparent);
+  --md-font-body: var(--theme-font-body);
+  --md-font-mono: var(--theme-font-mono);
+  --md-radius: var(--theme-radius);
+  --md-shadow: 0 1px 3px var(--theme-shadow);
+  --md-shadow-lg: 0 4px 12px var(--theme-shadow);
+}

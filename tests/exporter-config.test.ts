@@ -4,7 +4,11 @@ import { describe, expect, it } from 'vitest';
 const source = readFileSync('src/extension/exporter.ts', 'utf8');
 
 describe('Exporter HTML config support', () => {
-  it('imports export config, theme colors, theme registry, and font inliner', () => {
+  it('exports buildExportHTML as a standalone function', () => {
+    expect(source).toContain('export function buildExportHTML(');
+  });
+
+  it('imports theme registry and font inliner', () => {
     expect(source).toContain("from '../shared/export-config'");
     expect(source).toContain("from '../shared/theme-registry'");
     expect(source).toContain("from './font-inliner'");
@@ -30,19 +34,27 @@ describe('Exporter HTML config support', () => {
     expect(source).toContain("'Cancel'");
   });
 
-  it('wraps exported HTML with baked theme variables and font CSS', () => {
-    expect(source).toContain('getExportThemeColors(config.themeId)');
-    expect(source).toContain('--md-bg-primary: ${colors.bg};');
-    expect(source).toContain('--md-font-heading: ${fontResult.stacks.heading};');
-    expect(source).toContain('${fontResult.css}');
+  it('sets data-theme attribute on exported HTML', () => {
+    expect(source).toContain('data-theme="${themeId}"');
   });
 
-  it('does not use prefers-color-scheme in HTML export wrapper', () => {
-    const wrapperIndex = source.indexOf('private wrapExportHTMLDocument');
-    expect(wrapperIndex).toBeGreaterThanOrEqual(0);
-    const pdfWrapperIndex = source.indexOf('private wrapInHTMLDocument', wrapperIndex);
-    expect(pdfWrapperIndex).toBeGreaterThan(wrapperIndex);
-    const exportHtmlSection = source.slice(wrapperIndex, pdfWrapperIndex);
-    expect(exportHtmlSection).not.toContain('prefers-color-scheme');
+  it('reads CSS from dist/export-styles', () => {
+    expect(source).toContain("'dist', 'export-styles'");
+    expect(source).toContain("'markdown-body.css'");
+    expect(source).toContain("'themes.css'");
+    expect(source).toContain("'extensions.css'");
+  });
+
+  it('does not contain prefers-color-scheme', () => {
+    expect(source).not.toContain('prefers-color-scheme');
+  });
+
+  it('PDF export uses print-color-adjust: exact', () => {
+    expect(source).toContain('print-color-adjust: exact');
+  });
+
+  it('does not contain old wrapper methods', () => {
+    expect(source).not.toContain('wrapExportHTMLDocument');
+    expect(source).not.toContain('wrapInHTMLDocument');
   });
 });
