@@ -22,6 +22,8 @@
     onOverrideChange,
     onTogglePresentation,
     onToggleThemePanel = () => {},
+    onExportHTML = () => {},
+    onExportPDF = () => {},
   }: {
     override?: LayoutOverride;
     detectedLayout: LayoutType;
@@ -30,8 +32,30 @@
     onOverrideChange: (override: LayoutOverride) => void;
     onTogglePresentation: () => void;
     onToggleThemePanel?: () => void;
+    onExportHTML?: () => void;
+    onExportPDF?: () => void;
   } = $props();
+
+  let exportOpen = $state(false);
+
+  function handleWindowClick(e: MouseEvent) {
+    if (exportOpen && e.target instanceof Element && !e.target.closest('.layout-toolbar__export')) {
+      exportOpen = false;
+    }
+  }
+
+  function selectExportHTML() {
+    exportOpen = false;
+    onExportHTML();
+  }
+
+  function selectExportPDF() {
+    exportOpen = false;
+    onExportPDF();
+  }
 </script>
+
+<svelte:window onclick={handleWindowClick} />
 
 <nav class="layout-toolbar" aria-label="Preview layout controls">
   <div class="layout-toolbar__group" role="group" aria-label="Layout choices">
@@ -71,4 +95,39 @@
   <button class="layout-toolbar__slides" type="button" onclick={onTogglePresentation} title="Presentation mode">
     ▶ Slides
   </button>
+
+  <div class="layout-toolbar__export">
+    <button
+      class="layout-toolbar__export-toggle"
+      class:active={exportOpen}
+      type="button"
+      aria-haspopup="true"
+      aria-expanded={exportOpen}
+      title="Export"
+      onclick={() => { exportOpen = !exportOpen; }}
+    >
+      ⬇ Export ▾
+    </button>
+
+    {#if exportOpen}
+      <div class="layout-toolbar__export-dropdown" role="menu">
+        <button
+          class="layout-toolbar__export-item"
+          type="button"
+          role="menuitem"
+          onclick={selectExportHTML}
+        >
+          ⬇ Export as HTML
+        </button>
+        <button
+          class="layout-toolbar__export-item"
+          type="button"
+          role="menuitem"
+          onclick={selectExportPDF}
+        >
+          🖨 Export as PDF
+        </button>
+      </div>
+    {/if}
+  </div>
 </nav>
