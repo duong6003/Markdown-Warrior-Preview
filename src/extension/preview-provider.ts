@@ -5,6 +5,7 @@ import type { ExportConfig } from '../shared/export-config';
 import { MarkdownEngine } from './markdown-engine';
 import { ScrollSync } from './scroll-sync';
 import { AssetResolver } from './asset-resolver';
+import { Exporter } from './exporter';
 import { DEFAULT_THEME, getTheme } from '../shared/theme-registry';
 
 const THEME_GLOBAL_STATE_KEY = 'markdownWarrior.selectedTheme';
@@ -16,6 +17,7 @@ export class PreviewProvider {
   private panel: vscode.WebviewPanel | undefined;
   private currentEditor: vscode.TextEditor | undefined;
   private engine = new MarkdownEngine();
+  private exporter = new Exporter(this.engine);
   private scrollSync: ScrollSync | undefined;
   private disposables: vscode.Disposable[] = [];
   private selectedThemeId = DEFAULT_THEME;
@@ -172,6 +174,16 @@ export class PreviewProvider {
           this.context.globalState.update(FONT_HEADING_KEY, message.fontHeading),
           this.context.globalState.update(FONT_CODE_KEY, message.fontCode),
         ]);
+        break;
+      case 'exportHTML':
+        if (this.currentEditor) {
+          await this.exporter.exportHTML(this.currentEditor, this.getExportConfig());
+        }
+        break;
+      case 'exportPDF':
+        if (this.currentEditor) {
+          await this.exporter.exportPDF(this.currentEditor);
+        }
         break;
     }
   }
