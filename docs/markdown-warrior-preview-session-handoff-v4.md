@@ -18,8 +18,8 @@ C:\Users\PC\Desktop\extention markdown
 Tech stack:
 - VS Code extension host: TypeScript, esbuild.
 - Webview: Svelte 5, TypeScript, Vite.
-- Tests: Vitest — source-text pattern (`readFileSync` + `toContain`).
-- Packaging: `npx vsce package` → `.vsix`.
+- Tests: Vitest — phần lớn dùng source-text pattern (`readFileSync` + `toContain`) cho wiring/extension behavior.
+- Packaging: `npm exec -- vsce package` → `.vsix`.
 
 ---
 
@@ -27,129 +27,239 @@ Tech stack:
 
 ### Phiên bản
 
-**v0.3.0** — đã commit, tag, đóng gói, đẩy lên remote.
+**v0.4.0** — đã commit, tag local, đóng gói local. Chưa push remote, chưa publish Marketplace.
 
 ```text
-VSIX: markdown-warrior-view-0.3.0.vsix
-Git tag: v0.3.0
-Remote: https://github.com/duong6003/Markdown-Warrior-Preview.git
+VSIX: markdown-warrior-view-0.4.0.vsix
+Git tag: v0.4.0
 Branch: master
-HEAD: b832eba Prepare release 0.3.0 package
+HEAD: b7867ea docs: add v0.4.0 release notes
+Previous release tag: v0.3.0
+Remote: https://github.com/duong6003/Markdown-Warrior-Preview.git
+Remote status: master ahead origin/master by 24 commits
 ```
 
 ### Test suite
 
-```
-14 test files, 93 tests — tất cả pass
+Fresh verification trong release session:
+
+```text
+npm test
+23 test files, 163 tests — tất cả pass
 ```
 
-### Build
+### Build & Package
 
-Extension bundle + Vite webview build: thành công.
-Warning không blocking: `dist\extension\extension.js 10.3mb` (tồn tại từ trước).
+```text
+npm run build
+extension + webview build pass
+
+npm exec -- vsce package
+Packaged: markdown-warrior-view-0.4.0.vsix (73 files, 2.72 MB)
+```
+
+Warning không blocking: `dist\extension\extension.js 10.3mb` tồn tại từ trước.
 
 ---
 
 ## 3. Những Gì Đã Làm Trong Session Này
 
-### Phase: Display Experience Optimization
+### Phase: UX polish + font options + performance fixes
 
-**v0.2.0 — Ghost Nav (session trước)**
-- Xoá sidebar cố định của Docs, xoá rail cố định của Magazine.
-- Thêm `GhostNav.svelte`: hover-triggered overlay nav, trigger zone 20 px cạnh trái, fly transition (`x: -220`, 180 ms, `cubicOut`), debounce 150 ms.
-- Content full-width thay vì mất không gian cho sidebar/rail.
+Trước khi làm export HTML, đã review/fix các thay đổi UI/font/perf:
 
-**v0.3.0 — Article Layout Consolidation + Ghost Strip (session này)**
+1. **Ghost Nav affordance** — chevron/strip rõ hơn; chevron vị trí đúng `left: -3px`.
+2. **Context menu command** — preview command có trong editor context menu cho markdown.
+3. **App icon** — icon mới đã dùng trong package.
+4. **Font options** — ThemePanel có body/heading/code font selection.
+5. **Google Fonts loader** — encode family spaces theo Google Fonts API (`Playfair+Display`, `Fira+Code`, ...).
+6. **CSP** — cho phép `fonts.googleapis.com` và `fonts.gstatic.com` trong webview.
+7. **Font CSS vars** — thêm `--md-font-heading`, body/code font vars.
+8. **Performance** — `createDocumentModel()` có same-input memo cache và `resetDocumentModelCache()` cho tests.
+9. **Review fixes** — gỡ dependency thừa `sharp`, `@vitest/browser`; không swallow error trong `applyFont` ngoại trừ unknown font.
 
-1. **Xoá `docs` layout** — `DocsLayout.svelte` deleted.
-2. **Đổi tên `magazine` → `article`** — `MagazineLayout.svelte` → `ArticleLayout.svelte`, toàn bộ CSS class `magazine-*` → `article-*`, kicker text `"Markdown Warrior"` → `"Article"`.
-3. **Type system**: `LAYOUT_TYPES = ['article', 'story', 'dashboard']` (bỏ `docs`, `magazine`).
-4. **Layout engine**: `LAYOUT_PRIORITY = ['story', 'dashboard']`, score key `magazine` → `article`.
-5. **App.svelte + LayoutToolbar**: cập nhật imports, render branch, labels, options.
-6. **CSS cleanup**: xoá dead selectors `.docs-sidebar` và `.magazine-rail` khỏi `layouts.css`; xoá `BalancedCardLayout` dead values `'docs' | 'magazine'` khỏi `balanced-card.ts`.
-7. **Ghost strip affordance**: thêm `<div class="ghost-strip">` trong `GhostNav.svelte` — dải gradient 3 px cạnh trái, opacity 0.4, fade out khi panel mở (`class:hidden={navVisible}`).
+Commit liên quan:
+
+```text
+65c0e67 fix: address code review findings — font encoding, chevron position, error logging, cache reset
+8f72ece perf: add same-input memo cache to createDocumentModel
+e3f6477 feat: add font selection UI in ThemePanel with body, heading, code slots
+4f1e416 fix: allow Google Fonts domains in webview CSP
+4990cad feat: add --md-font-heading CSS variable and apply to headings
+c7f8c88 feat: extend WebviewState with fontBody, fontHeading, fontCode
+```
+
+### Phase: HTML Export with Current Configuration
+
+Goal: `Export as HTML` tạo standalone HTML khớp preview config hiện tại:
+- selected theme colors baked-in, không dùng `prefers-color-scheme`.
+- body / heading / code font choices.
+- Shiki syntax highlight theme theo selected theme.
+- Google Fonts optional inline base64 `woff2` cho offline; fallback system fonts nếu user chọn fallback.
+- `exportPDF` out of scope, giữ behavior cũ.
+
+Design + plan docs:
+
+```text
+docs/superpowers/specs/2026-05-23-html-export-with-config-design.md
+docs/superpowers/plans/2026-05-23-html-export-with-config.md
+```
+
+Implementation commits:
+
+```text
+0f70258 feat: add export config theme palettes
+5611381 fix: align export palettes with preview tokens
+0cfd799 refactor: share font registry with extension host
+554416b feat: add Google Fonts inliner for HTML export
+8122107 feat: sync font selections to extension host
+12ef119 feat: persist font selections for export
+113532b feat: export HTML with preview config
+```
+
+Release commits:
+
+```text
+d92cde0 chore: release v0.4.0
+b7867ea docs: add v0.4.0 release notes
+```
 
 ---
 
 ## 4. Cấu Trúc File Quan Trọng
 
-```
+```text
 src/
+  extension/
+    extension.ts             ← exportHTML command lấy previewProvider.getExportConfig()
+    exporter.ts              ← exportHTML(editor, config), Shiki theme, font dialog, baked HTML wrapper
+    font-inliner.ts          ← Google Fonts CSS/woff2 fetch + base64 inline + fallback stacks
+    preview-provider.ts      ← persists selected theme + font slots, exposes getExportConfig()
+  shared/
+    export-config.ts         ← ExportConfig, theme export colors, defaults, normalization
+    font-registry.ts         ← shared body/heading/code font registry
+    messages.ts              ← setFont + syncFonts webview-to-host messages
+    theme-registry.ts        ← preview themes + Shiki themes
   webview/
-    layouts/
-      ArticleLayout.svelte   ← layout duy nhất cho long-form content
-      StoryLayout.svelte
-      DashboardLayout.svelte
+    App.svelte               ← sends syncFonts on mount and setFont on font change
     lib/
-      GhostNav.svelte        ← overlay nav dùng chung (có ghost-strip)
-      layout-engine.ts       ← LAYOUT_TYPES, LAYOUT_PRIORITY, detectLayout
-      balanced-card.ts       ← BalancedCardLayout = 'article' | 'dashboard' | 'story'
-    types/
-      layout.ts              ← LAYOUT_TYPES = ['article', 'story', 'dashboard']
+      font-registry.ts       ← re-export from shared/font-registry
+      font-loader.ts         ← Google Fonts loader for preview
+      layout-engine.ts       ← memoized document model
+      GhostNav.svelte        ← overlay nav affordance
     components/
-      LayoutToolbar.svelte
-    App.svelte
-  styles/
-    layouts.css
+      ThemePanel.svelte      ← theme + font UI
 
 tests/
-  article-layout.test.ts
-  ghost-nav.test.ts
-  layout-engine.test.ts
-  layout-styles.test.ts
-  ... (14 files total)
+  export-config.test.ts
+  font-registry.test.ts
+  font-inliner.test.ts
+  app-font-sync.test.ts
+  preview-provider-fonts.test.ts
+  extension-export-config.test.ts
+  exporter-config.test.ts
+  ... (23 files total)
 ```
 
 ---
 
 ## 5. Domain Knowledge & Constraints
 
-Git requires safe directory override:
+Git may require safe directory override in some shells:
+
 ```powershell
 git -c safe.directory='C:/Users/PC/Desktop/extention markdown' <command>
 ```
 
-Layout detection priority: `story` > `dashboard` > `article` (article là baseline fallback, có `+ 2` constant).
+HTML export config flow:
 
-GhostNav behavior contract:
-- Render chỉ khi `sections.length > 1`.
-- Edge zone: fixed 20 px cạnh trái.
-- `showNav()` clears pending hide timeout, sets visible.
-- `scheduleHide()` hides sau 150 ms.
-- `onDestroy` clears hideTimeout.
-- Mobile: hidden via `@media (max-width: 900px)`.
+```text
+markdownWarrior.exportHTML command
+  → previewProvider.getExportConfig()
+  → exporter.exportHTML(editor, config)
+  → prepareFonts(config, showDialog)
+  → getTheme(config.themeId).shikiTheme
+  → engine.render(text, shikiTheme)
+  → wrapExportHTMLDocument(html, fileName, config, fontResult)
+```
 
-Ghost strip:
-- 3 px wide, `var(--md-accent)` gradient fade ở hai đầu, opacity 0.4.
-- `class:hidden={navVisible}` → opacity 0 khi panel mở.
-- `pointer-events: none` — không chặn edge zone hover.
+Font state constraints:
+- Font UI state originates in webview/browser state.
+- `App.svelte` sends `syncFonts` on mount and `setFont` on each change.
+- `PreviewProvider` persists font slots into `context.globalState`.
+- Export command reads persisted values with defaults: body `system`, heading `inherit`, code `cascadia`.
 
-Saved `layoutOverride: 'docs'` hoặc `'magazine'` từ bản cũ: `isLayoutType()` trả về false, `resolveLayout()` fallback to auto — graceful degradation, không cần migration.
+Google Fonts export behavior:
+- If no selected font uses Google Fonts → no dialog, use resolved configured stacks.
+- If Google Fonts present → modal prompt:
+  - `Embed` → fetch Google CSS + woff2, inline as base64.
+  - `Use system fallbacks` → no external font CSS, use system stacks.
+  - `Cancel` → abort export silently before save dialog.
+- Individual woff2 fetch failures keep original URL in CSS and log warning.
+- Google CSS fetch failure falls back to system stacks.
+
+Theme export behavior:
+- Uses `THEME_EXPORT_COLORS` from `src/shared/export-config.ts`.
+- Unknown theme falls back to `github-dark` colors.
+- Exported HTML wrapper must not contain `prefers-color-scheme`.
+- `exportPDF` remains on old `wrapInHTMLDocument()` path.
 
 Source-text test pattern:
+
 ```typescript
-const source = readFileSync('src/webview/...', 'utf8');
-expect(source).toContain('...');
+const source = readFileSync('src/extension/exporter.ts', 'utf8');
+expect(source).toContain('public async exportHTML(editor: vscode.TextEditor, config: ExportConfig)');
 ```
 
 ---
 
 ## 6. Open Items / Hot Spots
 
-- Runtime smoke test trong VS Code thực chưa được chạy (chưa verify hover behavior trong webview thật).
-- Extension bundle size 10.3 MB là tồn tại từ trước — non-blocking nhưng cần xem xét tree-shaking trong tương lai.
-- `layouts.css` vẫn còn `.docs-sidebar button:focus-visible, .magazine-rail button:focus-visible` và `.docs-sidebar button.active, .magazine-rail button.active` — dead CSS nhưng không gây lỗi. Có thể dọn tiếp nếu muốn.
+- **Not pushed:** `master` and tag `v0.4.0` are local only.
+- **Not marketplace-published:** VSIX exists locally; `vsce publish` not run.
+- **Runtime smoke test:** Not manually verified in VS Code Extension Development Host after v0.4.0.
+- **Bundle size:** extension bundle remains ~10.3 MB; non-blocking but worth investigating later.
+- **Old VSIX artifacts:** multiple older `.vsix` files remain in repo root; not tracked by git unless explicitly added.
+- **Claude local config:** `.claude/settings.local.json` remains untracked local config; do not commit unless intentional.
 
 ---
 
 ## 7. Next Steps Gợi Ý
 
-Những hướng tiếp theo có thể làm:
+1. **Push release to remote**
 
-1. **Runtime smoke test** — cài `.vsix`, mở markdown trong VS Code, verify ghost nav và ghost strip hoạt động đúng.
-2. **Dọn nốt dead CSS** — xoá `.docs-sidebar` và `.magazine-rail` khỏi base rule, focus-visible rule, active rule trong `layouts.css`.
-3. **Feature mới** — keyboard navigation cho ghost nav panel (hiện đang out of scope).
-4. **Bundle size** — investigate tree-shaking Mermaid/KaTeX để giảm extension bundle từ 10.3 MB.
+```powershell
+git push origin master
+git push origin v0.4.0
+```
+
+2. **Publish VS Code Marketplace** (requires token/login)
+
+```powershell
+npm exec -- vsce publish
+```
+
+3. **Manual install smoke test**
+
+```powershell
+code --install-extension markdown-warrior-view-0.4.0.vsix
+```
+
+Then verify in VS Code:
+- Open markdown file.
+- Open Markdown Warrior preview.
+- Select theme + fonts in ThemePanel.
+- Run `Markdown Warrior: Export as HTML`.
+- Test `Embed`, `Use system fallbacks`, and `Cancel` flows.
+- Inspect exported HTML for:
+  - `--md-bg-primary` matching selected theme.
+  - `--md-font-body`, `--md-font-heading`, `--md-font-mono` matching selected/fallback stacks.
+  - Shiki code colors matching selected theme.
+  - no `prefers-color-scheme`.
+
+4. **Clean old artifacts** if desired:
+- Keep latest `markdown-warrior-view-0.4.0.vsix`.
+- Delete old local `.vsix` files only if no longer needed.
 
 ---
 
@@ -157,14 +267,16 @@ Những hướng tiếp theo có thể làm:
 
 ```powershell
 # Kiểm tra trạng thái
-git -c safe.directory='C:/Users/PC/Desktop/extention markdown' log --oneline -5
-npm test
+git status --short --branch
+git log --oneline -8
+git tag --list --sort=-version:refname
 
-# Build
+# Verify
+npm test
 npm run build
 
-# Đóng gói phiên bản tiếp theo
-npx vsce package
+# Package lại nếu cần
+npm exec -- vsce package
 ```
 
 Suggested prompt for next session:

@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.4.1] - 2026-05-24
+
+### Added
+- Export dropdown button ("⬇ Export ▾") in the preview toolbar. Click to reveal two options: Export as HTML and Export as PDF — no Command Palette needed.
+- Dropdown closes automatically after selecting an option or clicking outside.
+
+---
+
 ## [0.4.0] - 2026-05-24
 
 ### Added
