@@ -1,5 +1,22 @@
 # Changelog
 
+## [0.4.0] - 2026-05-24
+
+### Added
+- HTML export now matches the active preview configuration: selected theme colors, body/heading/code font choices, and Shiki syntax theme.
+- Google Fonts used by the preview can be embedded into exported HTML as base64 `woff2` data for offline viewing.
+- Export flow warns before embedding Google Fonts and supports using system fallback fonts instead.
+- Font selections sync from the webview to the extension host so export commands can use the current preview typography.
+
+### Changed
+- Font registry is shared between the webview and extension host.
+- Exported HTML uses baked-in theme CSS variables instead of `prefers-color-scheme`, making the output stable across environments.
+
+### Fixed
+- Exported code blocks now render with the selected theme's Shiki colors.
+
+---
+
 ## [0.3.0] - 2026-05-23
 
 ### Added
