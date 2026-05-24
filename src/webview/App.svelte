@@ -171,6 +171,14 @@
     mode = mode === 'document' ? 'presentation' : 'document';
   }
 
+  function handleExportHTML() {
+    postMessage({ type: 'exportHTML' });
+  }
+
+  function handleExportPDF() {
+    postMessage({ type: 'exportPDF' });
+  }
+
   function handleKeydown(e: KeyboardEvent) {
     if (e.key === 'Escape' && mode === 'presentation') {
       e.preventDefault();
@@ -205,6 +213,8 @@
       onOverrideChange={(v) => { layoutOverride = v; }}
       onTogglePresentation={toggleMode}
       onToggleThemePanel={() => { panelVisible = !panelVisible; }}
+      onExportHTML={handleExportHTML}
+      onExportPDF={handleExportPDF}
     />
 
     <div class="preview-body">
